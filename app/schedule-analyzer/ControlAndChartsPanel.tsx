@@ -23,7 +23,7 @@ const ControlAndChartsPanel = () => {
     return (
         <div className="controlAndChartsDiv">
             <div className="divLeft">
-                <ControlPanel arrivals_callback={updateArrivalsData} coverage_callback={updateCoverageData} />
+                <ControlPanel arrivals_update_callback={updateArrivalsData} coverage_update_callback={updateCoverageData} />
             </div>
             <div className="divRight">
                 <ChartsPanel arrivals_data={arrivalsData!} coverage_data={currSchedCovData!} maxY={maxY} />

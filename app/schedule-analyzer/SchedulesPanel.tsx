@@ -4,9 +4,9 @@ import { CoverageDataType } from "./CurrentScheduleAndCoverageData";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 
 const SchedulesPanel = (
-    { coverage_callback }:
+    { coverage_update_callback: coverage_callback }:
         {
-            coverage_callback: (newData: CoverageDataType) => void,
+            coverage_update_callback: (newData: CoverageDataType) => void,
         }
 ) => {
     //const dataAccessor: PostLoginData = new PostLoginData();

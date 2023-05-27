@@ -9,10 +9,10 @@ import CurrentScheduleAndCoverageData, { CoverageDataType } from "./CurrentSched
 
 
 const DataLoaderPanel = (
-    { arrivals_callback, coverage_callback }:
+    { arrivals_update_callback: arrivals_callback, coverage_update_callback: coverage_callback }:
         {
-            arrivals_callback: (newData: ArrivalsDataType) => void,
-            coverage_callback: (newData: CoverageDataType) => void,
+            arrivals_update_callback: (newData: ArrivalsDataType) => void,
+            coverage_update_callback: (newData: CoverageDataType) => void,
         }
 ) => {
     const [startDatePickerDisabled, setStartDatePickerDisabled] = useState(true);

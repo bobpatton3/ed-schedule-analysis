@@ -1,7 +1,5 @@
 import { ShiftDataType } from "./AllSchedulesData";
 
-// TODO: THIS IS ALL WRONG! THE SCHEDULES SHOULDN'T BE IN HERE. 
-// SCHEDULES SHOULD BE LOADED SIMULATANEOUSLY WITH THE ARRIVALS LOAD AND ONLY THE SCHEDULES FOR THE CHOSEN GROUP/FACILITY/DEPARTMENT!
 
 export default class PostLoginData {
     private group_data: Map<string, Map<string, Map<string, {
