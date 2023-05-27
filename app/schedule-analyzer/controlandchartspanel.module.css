@@ -1,0 +1,20 @@
+.controlAndChartsDiv {
+    border: 2px solid lightgrey;
+    height: 90vh;
+};
+
+.divLeft {
+    display: inline-block;
+    width: 27vw;
+    height: 80vh;
+    vertical-align: top;
+    margin: 1rem 0rem 1rem 1rem;
+}
+
+.divRight {
+    display: inline-block;
+    width: 67vw;
+    height: 80vh;
+    vertical-align: top;
+    margin: 1rem 0rem 1rem 1rem;
+}

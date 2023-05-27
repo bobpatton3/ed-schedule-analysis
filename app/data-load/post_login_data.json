@@ -1,0 +1,39 @@
+{
+    "Best Emergency Physicians":{
+        "Memorial Hospital": {
+            "Main": {
+                "fullDataStartDate": "2021-01-01",
+                "fullDataEndDate": "2022-01-01"
+            },
+            "FastTrack": {
+                "fullDataStartDate": "2021-02-01",
+                "fullDataEndDate": "2022-02-01"}
+        },
+        "Regional Hospital": {
+            "Main": {
+                "fullDataStartDate": "2021-03-01",
+                "fullDataEndDate": "2022-03-01"},
+            "FastTrack": {
+                "fullDataStartDate": "2021-04-01",
+                "fullDataEndDate": "2022-04-01"}
+        }
+    },
+    "A1 Emergency Physicians":{
+        "Second Memorial Hospital": {
+            "Main": {
+                "fullDataStartDate": "2021-05-01",
+                "fullDataEndDate": "2022-05-01"},
+            "FastTrack": {
+                "fullDataStartDate": "2021-06-01",
+                "fullDataEndDate": "2022-06-01"}
+        },
+        "Another Regional Hospital": {
+            "Main": {
+                "fullDataStartDate": "2021-07-01",
+                "fullDataEndDate": "2022-07-01"},
+            "FastTrack": {
+                "fullDataStartDate": "2021-08-01",
+                "fullDataEndDate": "2022-08-01"}
+        }
+    }
+}

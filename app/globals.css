@@ -1,27 +1,126 @@
-@tailwind base;
+@import "~bootstrap/dist/css/bootstrap.min.css";
+
+/* @tailwind base;
 @tailwind components;
-@tailwind utilities;
+@tailwind utilities; 
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+label {
+  font-family: 'Montserrat', sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
-}
+*/
 
+*{
+  box-sizing: border-box;
+}
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  font-family: 'Montserrat', sans-serif;
+  width: 100%;
+  font-size: 16px;
+}
+
+button {
+  font-size: 8px;
+}
+h2 {
+  font-size: 3rem;
+  font-family: 'Abril Fatface', cursive;
+  font-weight: lighter;
+  color: #333;
+}
+h3 {
+  font-size: 1.3rem;
+  color: #333;
+}
+p {
+  font-size: 1.5rem;
+  line-height: 200%;
+  color: #696969;
+}
+a {
+  text-decoration: none;
+  color: #333;
+}
+img {
+  display: block;
+}
+input {
+  font-weight: bold;
+  font-family: "Montserrat", sans-serif;
+}
+
+.baseAppPanel {
+  border: 1px solid lightgrey;
+  margin: 1rem 1rem 0rem 1rem;
+}
+.edSchedStatusHdr {
+  font-weight: bold;
+  padding: 0rem 0.5rem 0rem 1rem;
+  color: #5a5a5a;
+}
+.edSchedStatusConnector {
+  font-weight: bold;
+  padding: 0rem 0.1rem 0rem 0.2rem;
+  color: #5a5a5a;
+}
+.statusHeaderDiv {
+  border: 2px solid lightgrey;
+  padding: 0.85rem 1rem;
+}
+.statusHeaderInfo {
+  font-weight: bold;
+  padding: 0rem 0rem 0rem 0rem;
+  color: #ffa500;
+}
+.chartsPanelDiv {
+  margin: 0rem;
+  padding: 0rem;
+  border: 2px solid lightgrey;
+}
+.controlAndChartsDiv {
+  border: 2px solid lightgrey;
+  height: 90vh;
+}
+.divLeft {
+  display: inline-block;
+  width: 23rem;
+  height: 80vh;
+  vertical-align: top;
+  margin: 1rem 0rem 1rem 0.3rem;
+}
+.divRight {
+  display: inline-block;
+  width: 65vw;
+  height: 80vh;
+  vertical-align: top;
+  margin: 1rem 0rem 1rem 1rem;
+}
+.controlPanelDiv {
+  margin: 0rem;
+  padding: 0rem;
+  border: 2px solid lightgrey;
+  height: 80vh;
+  width: 23rem;
+}
+.dataLoaderLabel {
+  display: inline-block;
+  vertical-align: top;
+  margin: 0.5rem 0.5rem 0.5rem 0.5rem;
+  width: 20rem;
+}
+.datePickerDiv {
+  display: inline-block;
+  vertical-align: top;
+  margin: 1rem 0.5rem 0.5rem 0.5rem;
+  min-width: 16rem;
+}
+.setMonthsButtons {
+  display: inline-block;
+  vertical-align: top;
+  margin: 1rem 0.5rem 0.5rem 0.5rem;
+  min-width: 4rem;
+}
+.schedulesPanelDiv {
+  vertical-align: top;
+  margin: 0.5rem 0.5rem 0.5rem 0.5rem;
 }
