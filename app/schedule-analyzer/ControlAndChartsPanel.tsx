@@ -2,9 +2,9 @@
 import React, { useState } from "react";
 import ChartsPanel from "./ChartsPanel";
 import ControlPanel from "./ControlPanel";
-import ArrivalsData, { ArrivalsDataType } from "./ArrivalsData";
-import CurrentScheduleAndCoverageData, { CoverageDataType, StatusHeaderDataType } from "./CurrentScheduleAndCoverageData";
-import AllSchedulesData, { ScheduleDataType } from "./AllSchedulesData";
+import { ArrivalsDataType } from "./ArrivalsData";
+import { CoverageDataType, StatusHeaderDataType } from "./CurrentScheduleAndCoverageData";
+import { ScheduleDataType } from "./AllSchedulesData";
 
 function ControlAndChartsPanel(
     {
