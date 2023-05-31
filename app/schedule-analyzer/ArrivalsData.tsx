@@ -80,7 +80,7 @@ export default class ArrivalsData {
             const weekMax: number = this.yMaxUtilSlice(week);
             maxy = (maxy < weekMax) ? weekMax : maxy;
         })
-        this.y_max = maxy;
+        this.y_max = Math.ceil(maxy);
         console.log("calculated Arrivals y_max: " + maxy);
     }
 
@@ -108,6 +108,7 @@ export default class ArrivalsData {
         return this.default_arrivals_data;
     }
     public getMaxY(): number {
+        this.calculateMaxY();
         console.log("returning Arrivals y_max: " + this.y_max);
         return this.y_max;
     }

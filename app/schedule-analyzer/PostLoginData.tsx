@@ -1,6 +1,3 @@
-import { ShiftDataType } from "./AllSchedulesData";
-
-
 export default class PostLoginData {
     private group_data: Map<string, Map<string, Map<string, {
         start: Date, end: Date,

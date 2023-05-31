@@ -6,7 +6,6 @@ import Link from "next/link";
 import { useState } from "react";
 import { Button, FloatingLabel, Form } from "react-bootstrap";
 import PostLoginData from "../schedule-analyzer/PostLoginData";
-import { ShiftDataType } from "../schedule-analyzer/AllSchedulesData";
 
 export default function DataLoadForm({
   searchParams,
@@ -16,8 +15,8 @@ export default function DataLoadForm({
   const [startDatePickerDisabled, setStartDatePickerDisabled] = useState(true);
   const [endDatePickerDisabled, setEndDatePickerDisabled] = useState(true);
   const [loadButtonDisabled, setLoadButtonDisabled] = useState(true);
-  const [facilities, setFacilities] = useState<Map<string, Map<string, { start: Date, end: Date }>>>(new Map<string, Map<string, { start: Date, end: Date, schedules: Map<string, ShiftDataType[]> }>>());
-  const [departments, setDepartments] = useState<Map<string, { start: Date, end: Date }>>(new Map<string, { start: Date, end: Date, schedules: Map<string, ShiftDataType[]> }>());
+  const [facilities, setFacilities] = useState<Map<string, Map<string, { start: Date, end: Date }>>>(new Map<string, Map<string, { start: Date, end: Date, }>>());
+  const [departments, setDepartments] = useState<Map<string, { start: Date, end: Date }>>(new Map<string, { start: Date, end: Date, }>());
   const [earliestStarDate, setEarliestStarDate] = useState<Date>();
   const [latestEndDate, setLatestEndDate] = useState<Date>();
   const [chosenGroup, setChosenGroup] = useState<string>("");
@@ -30,7 +29,7 @@ export default function DataLoadForm({
   const [defaultDepartmentSelectOptionDisabled, setDefaultDepartmentSelectOptionDisabled] = useState(false);
 
   const dataAccessor: PostLoginData = new PostLoginData();
-  const postLoginData: Map<string, Map<string, Map<string, { start: Date, end: Date, schedules: Map<string, ShiftDataType[]> }>>> = dataAccessor.getPostLoginData();
+  const postLoginData: Map<string, Map<string, Map<string, { start: Date, end: Date, }>>> = dataAccessor.getPostLoginData();
 
   const dataStartDateChanged = (newStartDate: Date | null) => {
     setChosenStartDate(newStartDate!);
@@ -48,7 +47,7 @@ export default function DataLoadForm({
   };
 
   function onGroupSelect(e: any) {
-    const grp: Map<string, Map<string, { start: Date, end: Date, schedules: Map<string, ShiftDataType[]> }>> = postLoginData.get(e.target.value)!;
+    const grp: Map<string, Map<string, { start: Date, end: Date, }>> = postLoginData.get(e.target.value)!;
     setChosenGroup(e.target.value);
     setFacilities(grp);
     setDefaultGroupSelectOptionDisabled(true);
@@ -65,7 +64,6 @@ export default function DataLoadForm({
     const dates: { start: Date, end: Date } = departments.get(e.target.value)!;
     setChosenDepartment(e.target.value);
     setEarliestStarDate(dates.start);
-    console.log(dates.start.toString() + "  :  " + dates.end.toString());
     setLatestEndDate(dates.end);
     setDefaultDepartmentSelectOptionDisabled(true);
     setStartDatePickerDisabled(false);

@@ -5,14 +5,13 @@ import { useState } from "react";
 import { Button, FloatingLabel, Form } from "react-bootstrap";
 import PostLoginData from "./PostLoginData";
 import ArrivalsData, { ArrivalsDataType } from "./ArrivalsData";
-import CurrentScheduleAndCoverageData, { CoverageDataType } from "./CurrentScheduleAndCoverageData";
-
+import CurrentScheduleAndCoverageData, { CoverageDataType, StatusHeaderDataType } from "./CurrentScheduleAndCoverageData";
 
 const DataLoaderPanel = (
-    { arrivals_update_callback: arrivals_callback, coverage_update_callback: coverage_callback }:
+    { arrivals_update_callback, all_schedules_update_callback }:
         {
-            arrivals_update_callback: (newData: ArrivalsDataType) => void,
-            coverage_update_callback: (newData: CoverageDataType) => void,
+            arrivals_update_callback: (arrivals_data: ArrivalsDataType, status_header_data: StatusHeaderDataType,) => void,
+            all_schedules_update_callback: (group: string, facility: string, department: string) => void,
         }
 ) => {
     const [startDatePickerDisabled, setStartDatePickerDisabled] = useState(true);
@@ -21,14 +20,14 @@ const DataLoaderPanel = (
     const [loadFixedMonthsDisabled, setLoadFixedMonthsDisabled] = useState(true);
     const [facilities, setFacilities] = useState<Map<string, Map<string, { start: Date, end: Date }>>>(new Map<string, Map<string, { start: Date, end: Date }>>());
     const [departments, setDepartments] = useState<Map<string, { start: Date, end: Date }>>(new Map<string, { start: Date, end: Date }>());
-    const [earliestStartDate, setEarliestStartDate] = useState<Date>();
-    const [earliestEndDate, setEarliestEndDate] = useState<Date>();
-    const [latestEndDate, setLatestEndDate] = useState<Date>();
+    const [earliestStartDate, setEarliestStartDate] = useState<Date>(new Date());
+    const [earliestEndDate, setEarliestEndDate] = useState<Date>(new Date());
+    const [latestEndDate, setLatestEndDate] = useState<Date>(new Date());
     const [chosenGroup, setChosenGroup] = useState<string>("");
     const [chosenFacility, setChosenFacility] = useState<string>("");
     const [chosenDepartment, setChosenDepartment] = useState<string>("");
-    const [chosenStartDate, setChosenStartDate] = useState<Date>();
-    const [chosenEndDate, setChosenEndDate] = useState<Date>();
+    const [chosenStartDate, setChosenStartDate] = useState<Date>(new Date());
+    const [chosenEndDate, setChosenEndDate] = useState<Date>(new Date());
     const [defaultGroupSelectOptionDisabled, setDefaultGroupSelectOptionDisabled] = useState(false);
     const [defaultFacilitySelectOptionDisabled, setDefaultFacilitySelectOptionDisabled] = useState(false);
     const [defaultDepartmentSelectOptionDisabled, setDefaultDepartmentSelectOptionDisabled] = useState(false);
@@ -37,9 +36,11 @@ const DataLoaderPanel = (
     const postLoginData: Map<string, Map<string, Map<string, { start: Date, end: Date }>>> = dataAccessor.getPostLoginData();
 
     const dataStartDateChanged = (newStartDate: Date | null) => {
-        setChosenStartDate(newStartDate!);
-        setEarliestEndDate(newStartDate!);
-        setEndDatePickerDisabled(false);
+        if (newStartDate) {
+            setChosenStartDate(newStartDate);
+            setEarliestEndDate(newStartDate);
+            setEndDatePickerDisabled(false);
+        };
         //setLoadButtonDisabled(true);  // Unsure at the moment whether or not this is a good idea.
     };
 
@@ -82,7 +83,7 @@ const DataLoaderPanel = (
         setChosenDepartment(e.target.value);
         setEarliestStartDate(dates.start);
         setLatestEndDate(dates.end);
-        console.log(dates.start.toUTCString() + "  :  " + dates.end.toUTCString());
+        console.log("onDepartmentSelect: " + dates.start.toUTCString() + "  :  " + dates.end.toUTCString());
         setDefaultDepartmentSelectOptionDisabled(true);
         setStartDatePickerDisabled(false);
         setLoadButtonDisabled(true);
@@ -97,15 +98,33 @@ const DataLoaderPanel = (
         // TODO: The below is just for testing. Need the real code here that will ultimately lead to the API calls.
         const arrData: ArrivalsData = new ArrivalsData();
         const covData: CurrentScheduleAndCoverageData = new CurrentScheduleAndCoverageData();
-        if (e.target.value == 6) {
+
+        // TODO: chosen Dates below are not accurate when using the 3, 6, and 12 month buttons
+        const presetsStartDate: Date = subtractDays(latestEndDate, e.target.value as number);
+        console.log("presetsStartDate: " + presetsStartDate);
+
+        const status_header_data: StatusHeaderDataType = {
+            facility_name: chosenFacility,
+            department_name: chosenDepartment,
+            data_start_date: presetsStartDate,
+            data_end_date: latestEndDate,
+            schedule_name: ""
+        };
+        //const allSchedulesData: AllSchedulesData = new AllSchedulesData();
+        all_schedules_update_callback(chosenGroup, chosenFacility, chosenDepartment);
+
+        if (e.target.value == 182) {
             const ad: ArrivalsDataType = arrData.getDefaultArrivalsData();
-            arrivals_callback(ad);
-            coverage_callback(covData.getDefaultCoverageData());
+            arrivals_update_callback(ad, status_header_data);
         } else {
-            arrivals_callback(arrData.getArrivalsData());
-            coverage_callback(covData.getCoverageData());
+            arrivals_update_callback(arrData.getArrivalsData(), status_header_data);
         }
 
+    }
+    function subtractDays(date: Date, days: number) {
+        var result = new Date(date);
+        result.setDate(result.getDate() - days);
+        return result;
     }
 
     return (
@@ -130,9 +149,9 @@ const DataLoaderPanel = (
                 </Form.Select>
             </FloatingLabel>
             <div className="dataLoaderLabel" >Load the most recent # months:</div>
-            <Button variant="outline-primary" onClick={onClickFixedMonthsLoadButton} disabled={loadFixedMonthsDisabled} className="setMonthsButtons" value={3}>3</Button>
-            <Button variant="outline-primary" onClick={onClickFixedMonthsLoadButton} disabled={loadFixedMonthsDisabled} className="setMonthsButtons" value={6}>6</Button>
-            <Button variant="outline-primary" onClick={onClickFixedMonthsLoadButton} disabled={loadFixedMonthsDisabled} className="setMonthsButtons" value={12}>12</Button>
+            <Button variant="outline-primary" onClick={onClickFixedMonthsLoadButton} disabled={loadFixedMonthsDisabled} className="setMonthsButtons" value={91}>3</Button>
+            <Button variant="outline-primary" onClick={onClickFixedMonthsLoadButton} disabled={loadFixedMonthsDisabled} className="setMonthsButtons" value={182}>6</Button>
+            <Button variant="outline-primary" onClick={onClickFixedMonthsLoadButton} disabled={loadFixedMonthsDisabled} className="setMonthsButtons" value={364}>12</Button>
 
             <div className="dataLoaderLabel" >Load Custom Date Range:</div>
 

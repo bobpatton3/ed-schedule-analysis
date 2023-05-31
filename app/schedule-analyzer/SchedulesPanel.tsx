@@ -1,57 +1,56 @@
 "use client";
 
-import { CoverageDataType } from "./CurrentScheduleAndCoverageData";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { Button } from "react-bootstrap";
+import { ScheduleDataType } from "./AllSchedulesData";
+import { DataGrid, GridColDef, GridRowId } from "@mui/x-data-grid";
 
-const SchedulesPanel = (
-    { coverage_update_callback: coverage_callback }:
-        {
-            coverage_update_callback: (newData: CoverageDataType) => void,
-        }
-) => {
-    //const dataAccessor: PostLoginData = new PostLoginData();
-    //const postLoginData: Map<string, Map<string, Map<string, { start: Date, end: Date }>>> = dataAccessor.getPostLoginData();
-
-    function onClickScheduleNameButton(e: any) {
+function SchedulesPanel(
+    {
+        select_schedule_callback,
+        all_schedules_data,
+    }: {
+        select_schedule_callback: (pk: string) => void;
+        all_schedules_data: Map<string, ScheduleDataType>;
     }
+) {
 
-    const rows: object[] = [
-        {
-            "id": "1",
-            "name": "Bobs First Schedule Design",
-            "creator": "bpatton",
-            "yearly_cost": "$4.4",
-            "creation_date": "2023-01-01",
-        },
-        {
-            "id": "2",
-            "name": "Bobs Second Schedule Design",
-            "creator": "bpatton",
-            "yearly_cost": "$5.5",
-            "creation_date": "2023-02-02",
-        },
-    ]
+    const onClickScheduleNameButton = (id: GridRowId): void => {
+        select_schedule_callback(id.toString());
+    };
+
+    const rows: object[] = [];
+    all_schedules_data.forEach((value: ScheduleDataType, key: string) => {
+        console.log(key);
+        rows.push({
+            id: key,
+            name: value.schedule_name,
+            creator: value.owner,
+            yearly_cost: value.yearly_cost,
+            creation_date: value.creationDate
+        });
+    });
 
     const columns: GridColDef[] = [
         {
             field: 'name',
             headerName: 'Name',
             width: 200,
-            align: 'left'
+            align: 'left',
+            renderCell: (params) => (
+                <Button onClick={() => onClickScheduleNameButton(params.id)}>{params.value}</Button>
+            ),
         },
         {
             field: 'creator',
             headerName: 'Creator',
             width: 100,
             align: 'center',
-
         },
         {
             field: 'yearly_cost',
             headerName: 'Yearly Cost',
             width: 50,
             align: 'center',
-
         },
         {
             field: 'creation_date',
@@ -59,7 +58,6 @@ const SchedulesPanel = (
             width: 70,
             align: 'center'
         },
-
     ];
 
     return (
@@ -68,8 +66,7 @@ const SchedulesPanel = (
                 rows={rows}
                 columns={columns}
                 hideFooter={true}
-                checkboxSelection={true}
-            />
+                checkboxSelection={true} />
         </div>
     );
 }

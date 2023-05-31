@@ -29,11 +29,21 @@ const ArrivalsVsCoverageChart = ({
     ];
 
     const default_options: ApexOptions = ArrVCovChartOptions(maxY);
+
     const title_options = {
         ...default_options.title,
         text: day_of_week + " " + default_options.title?.text,
     };
-    const new_options = { ...default_options, title: title_options };
+
+    const maxY_options = {
+        ...default_options.yaxis,
+        max: Math.ceil(maxY),
+    };
+
+    const new_options = { ...default_options, title: title_options, yaxis: maxY_options };
+
+    console.log(maxY_options);
+
     return (
         <div>
             <Chart options={new_options} series={series} type="line" />

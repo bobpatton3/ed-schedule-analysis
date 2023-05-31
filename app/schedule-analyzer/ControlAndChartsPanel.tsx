@@ -3,33 +3,48 @@ import React, { useState } from "react";
 import ChartsPanel from "./ChartsPanel";
 import ControlPanel from "./ControlPanel";
 import ArrivalsData, { ArrivalsDataType } from "./ArrivalsData";
-import CurrentScheduleAndCoverageData, { CoverageDataType } from "./CurrentScheduleAndCoverageData";
+import CurrentScheduleAndCoverageData, { CoverageDataType, StatusHeaderDataType } from "./CurrentScheduleAndCoverageData";
+import AllSchedulesData, { ScheduleDataType } from "./AllSchedulesData";
 
-const ControlAndChartsPanel = () => {
-
-    const arrivals_data: ArrivalsData = new ArrivalsData();
-    const [arrivalsData, setArrivalsData] = useState<ArrivalsDataType>(arrivals_data.getDefaultArrivalsData());
-
-    const curr_sched_cov_data: CurrentScheduleAndCoverageData = new CurrentScheduleAndCoverageData();
-    const [currSchedCovData, setCurrSchedCovData] = useState<CoverageDataType>(curr_sched_cov_data.getDefaultCoverageData());
-
-    const updateArrivalsData = (newData: ArrivalsDataType) => setArrivalsData(newData);
-    const updateCoverageData = (newData: CoverageDataType) => setCurrSchedCovData(newData);
-
-    const covMaxY = curr_sched_cov_data.getMaxY();
-    const arrMaxY = arrivals_data.getMaxY();
-    const maxY = (covMaxY < arrMaxY) ? arrMaxY : covMaxY;
-
+function ControlAndChartsPanel(
+    {
+        arrivals_update_callback,
+        coverage_update_callback,
+        select_schedule_callback,
+        arrivals_data,
+        coverage_data,
+        maxY,
+        all_schedules_data,
+        all_schedules_update_callback,
+        current_schedule_data,
+    }: {
+        arrivals_update_callback: (arrivals_data: ArrivalsDataType, status_header_data: StatusHeaderDataType) => void;
+        coverage_update_callback: (coverage_data: CoverageDataType) => void;
+        select_schedule_callback: (pk: string) => void;
+        arrivals_data: ArrivalsDataType;
+        coverage_data: CoverageDataType;
+        maxY: number;
+        all_schedules_data: Map<string, ScheduleDataType>;
+        all_schedules_update_callback: (group: string, facility: string, department: string) => void;
+        current_schedule_data: ScheduleDataType;
+    }
+) {
     return (
         <div className="controlAndChartsDiv">
             <div className="divLeft">
-                <ControlPanel arrivals_update_callback={updateArrivalsData} coverage_update_callback={updateCoverageData} />
+                <ControlPanel
+                    arrivals_update_callback={arrivals_update_callback}
+                    coverage_update_callback={coverage_update_callback}
+                    select_schedule_callback={select_schedule_callback}
+                    all_schedules_data={all_schedules_data}
+                    all_schedules_update_callback={all_schedules_update_callback}
+                    current_schedule_data={current_schedule_data} />
             </div>
             <div className="divRight">
-                <ChartsPanel arrivals_data={arrivalsData!} coverage_data={currSchedCovData!} maxY={maxY} />
+                <ChartsPanel arrivals_data={arrivals_data} coverage_data={coverage_data} maxY={maxY} />
             </div>
         </div>
     );
-};
+}
 
 export default ControlAndChartsPanel;

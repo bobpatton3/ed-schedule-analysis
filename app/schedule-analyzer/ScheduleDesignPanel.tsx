@@ -1,26 +1,26 @@
 "use client";
 
-import { useState } from "react";
-import PostLoginData from "./PostLoginData";
-import CurrentScheduleAndCoverageData, { CoverageDataType } from "./CurrentScheduleAndCoverageData";
+import { CoverageDataType } from "./CurrentScheduleAndCoverageData";
+import ShiftSliderComponent from "./ShiftSliderComponent";
+import { ScheduleDataType } from "./AllSchedulesData";
 
-
-const ScheduleDesignPanel = (
-    { coverage_update_callback: coverage_callback }:
-        {
-            coverage_update_callback: (newData: CoverageDataType) => void,
-        }
-) => {
-    //const dataAccessor: PostLoginData = new PostLoginData();
-    //const postLoginData: Map<string, Map<string, Map<string, { start: Date, end: Date }>>> = dataAccessor.getPostLoginData();
-
-    function onClickScheduleNameButton(e: any) {
+function ScheduleDesignPanel(
+    {
+        coverage_update_callback,
+        current_schedule_data,
+    }: {
+        coverage_update_callback: (newData: CoverageDataType) => void;
+        current_schedule_data: ScheduleDataType;
     }
-
+) {
     return (
-
-        <div>
-            Schedule Design stuff coming!
+        <div className="schedulesPanelDiv">
+            {current_schedule_data.shifts.map((shift) => <ShiftSliderComponent
+                key={shift.id}
+                coverage_update_callback={coverage_update_callback}
+                shift={shift.id}
+                start={shift.start}
+                duration={shift.duration} />)}
         </div>
     );
 }

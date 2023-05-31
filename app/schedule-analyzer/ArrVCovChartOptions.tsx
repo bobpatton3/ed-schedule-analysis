@@ -1,7 +1,7 @@
 "use client";
 import { ApexOptions } from "apexcharts";
 
-export default function ArrVCovChartOptions(minY: number) {
+export default function ArrVCovChartOptions(maxY: number) {
   const options: ApexOptions = {
     chart: {
       toolbar: {
@@ -91,7 +91,9 @@ export default function ArrVCovChartOptions(minY: number) {
     },
     yaxis: {
       min: 0.0,
-      max: minY,
+      max: maxY,
+      forceNiceScale: true,
+      decimalsInFloat: 0,
       title: {
         text: "RVUs/Hour",
         style: {

@@ -83,14 +83,14 @@ input {
 }
 .divLeft {
   display: inline-block;
-  width: 23rem;
+  width: 28rem;
   height: 80vh;
   vertical-align: top;
   margin: 1rem 0rem 1rem 0.3rem;
 }
 .divRight {
   display: inline-block;
-  width: 65vw;
+  width: 60vw;
   height: 80vh;
   vertical-align: top;
   margin: 1rem 0rem 1rem 1rem;
@@ -100,7 +100,7 @@ input {
   padding: 0rem;
   border: 2px solid lightgrey;
   height: 80vh;
-  width: 23rem;
+  width: 27rem;
 }
 .dataLoaderLabel {
   display: inline-block;
@@ -123,4 +123,10 @@ input {
 .schedulesPanelDiv {
   vertical-align: top;
   margin: 0.5rem 0.5rem 0.5rem 0.5rem;
+}
+.slider {
+  color: #b22042;
+}
+.slider .thumb {
+  border-radius: 3px;
 }
