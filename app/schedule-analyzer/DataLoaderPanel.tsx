@@ -8,10 +8,10 @@ import ArrivalsData, { ArrivalsDataType } from "./ArrivalsData";
 import CurrentScheduleAndCoverageData, { CoverageDataType, StatusHeaderDataType } from "./CurrentScheduleAndCoverageData";
 
 const DataLoaderPanel = (
-    { arrivals_update_callback, all_schedules_update_callback }:
+    { arrivals_update_callback, retrieve_all_schedules_callback: all_schedules_update_callback }:
         {
             arrivals_update_callback: (arrivals_data: ArrivalsDataType, status_header_data: StatusHeaderDataType,) => void,
-            all_schedules_update_callback: (group: string, facility: string, department: string) => void,
+            retrieve_all_schedules_callback: (group: string, facility: string, department: string) => void,
         }
 ) => {
     const [startDatePickerDisabled, setStartDatePickerDisabled] = useState(true);

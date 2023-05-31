@@ -6,10 +6,10 @@ import { ScheduleDataType } from "./AllSchedulesData";
 
 function ScheduleDesignPanel(
     {
-        coverage_update_callback,
+        curr_sched_cov_update_callback: coverage_update_callback,
         current_schedule_data,
     }: {
-        coverage_update_callback: (newData: CoverageDataType) => void;
+        curr_sched_cov_update_callback: (newData: CoverageDataType) => void;
         current_schedule_data: ScheduleDataType;
     }
 ) {

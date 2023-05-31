@@ -1,6 +1,5 @@
 "use client";
-import StatusHeader from "./StatusHeader";
-import ControlAndChartsPanel from "./ControlAndChartsPanel";
+
 import ArrivalsData, { ArrivalsDataType } from "./ArrivalsData";
 import { useState } from "react";
 import CurrentScheduleAndCoverageData, {
@@ -8,6 +7,11 @@ import CurrentScheduleAndCoverageData, {
     StatusHeaderDataType,
 } from "./CurrentScheduleAndCoverageData";
 import AllSchedulesData, { ScheduleDataType } from "./AllSchedulesData";
+import { Tab, Tabs } from "react-bootstrap";
+import DataLoaderPanel from "./DataLoaderPanel";
+import SchedulesPanel from "./SchedulesPanel";
+import ScheduleDesignPanel from "./ScheduleDesignPanel";
+import ArrivalsDataSlice from "./ArrivalsDataSlice";
 
 export default function ScheduleAnalyzer() {
     const todaysDate: Date = new Date();
@@ -67,28 +71,80 @@ export default function ScheduleAnalyzer() {
     }
 
     /* TODOs:
-          1. Deal with the whole Date conversion and UTC time problem
-          2. Add functionality to the ScheduleDesignPanel
-          3. heat map!
-          4. SchedulesPanel need to re-style the button and maybe move the checkbox to the end
-          5. SchedulesPanel needs the UI enabledment for deleting a schedule
+        1. Deal with the whole Date conversion and UTC time problem
+        2. Add functionality to the ScheduleDesignPanel
+        3. heat map!
+        4. SchedulesPanel need to re-style the button and maybe move the checkbox to the end
+        5. SchedulesPanel needs the UI enabledment for deleting a schedule
+
+
+        // the mapping:
+            status_header_data={statusHeaderData} 
+            arrivals_update_callback={updateArrivalsData}
+            curr_sched_cov_update_callback={updateCurrentScheduleAndCoverageData}
+            select_schedule_callback={setNewSelectedSchedule}
+            arrivals_data={arrivalsData}
+            coverage_data={currCovData}
+            maxY={maxY}
+            all_schedules_data={allSchedulesData}
+            all_schedules_update_callback={retrieveAllScheduleData}
+            current_schedule_data={currSchedData}
     */
+
     if (arrivalsData && currCovData) {
         return (
+
             <div className="baseAppPanel">
-                <StatusHeader status_header_data={statusHeaderData} />
-                <ControlAndChartsPanel
-                    arrivals_update_callback={updateArrivalsData}
-                    coverage_update_callback={updateCurrentScheduleAndCoverageData}
-                    select_schedule_callback={setNewSelectedSchedule}
-                    arrivals_data={arrivalsData}
-                    coverage_data={currCovData}
-                    maxY={maxY}
-                    all_schedules_data={allSchedulesData}
-                    all_schedules_update_callback={retrieveAllScheduleData}
-                    current_schedule_data={currSchedData}
-                />
+
+                <div className="statusHeaderDiv">
+                    <label className="edSchedStatusHdr">Facility: </label>
+                    <label className="statusHeaderInfo">{statusHeaderData.facility_name}</label>
+                    <label className="edSchedStatusHdr">Department: </label>
+                    <label className="statusHeaderInfo">{statusHeaderData.department_name} </label>
+                    <label className="edSchedStatusHdr">Date Range: </label>
+                    <label className="statusHeaderInfo">{statusHeaderData.data_start_date.toLocaleDateString()}</label>
+                    <label className="edSchedStatusConnector">-</label>
+                    <label className="statusHeaderInfo">{statusHeaderData.data_end_date.toLocaleDateString()}</label>
+                    <label className="edSchedStatusHdr">Schedule: </label>
+                    <label className="statusHeaderInfo">{statusHeaderData.schedule_name} </label>
+                </div>
+
+                <div className="controlAndChartsDiv">
+                    <div className="divLeft">
+                        <Tabs>
+                            <Tab eventKey="data_loader" title="Data Loader">
+                                <div className="controlPanelDiv">
+                                    <DataLoaderPanel arrivals_update_callback={updateArrivalsData} retrieve_all_schedules_callback={retrieveAllScheduleData} />
+                                </div>
+                            </Tab>
+                            <Tab eventKey="existing_schedules" title="Schedules">
+                                <div className="controlPanelDiv">
+                                    <SchedulesPanel select_schedule_callback={setNewSelectedSchedule} all_schedules_data={allSchedulesData} />
+                                </div>
+                            </Tab>
+                            <Tab eventKey="schedule_design" title="Design">
+                                <div className="controlPanelDiv">
+                                    <div className="controlPanelDiv">
+                                        <ScheduleDesignPanel curr_sched_cov_update_callback={updateCurrentScheduleAndCoverageData} current_schedule_data={currSchedData} />
+                                    </div>
+                                </div>
+                            </Tab>
+                        </Tabs>
+                    </div>
+                    <div className="divRight">
+                        <Tabs>
+                            <Tab eventKey="full" title="Full Department">
+                                <ArrivalsDataSlice dept_arrivals_data={arrivalsData.Full} dept_coverage_data={currCovData.Full} maxY={maxY} />
+                            </Tab>
+                            <Tab eventKey="phys_only" title="PhysOnly (CClvl5)">
+                                <ArrivalsDataSlice dept_arrivals_data={arrivalsData.lvl5CC} dept_coverage_data={currCovData.lvl5CC} maxY={maxY} />
+                            </Tab>
+                        </Tabs>
+                    </div>
+                </div>
+
             </div>
+
         );
     }
 }

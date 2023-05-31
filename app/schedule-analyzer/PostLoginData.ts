@@ -55,38 +55,3 @@ export default class PostLoginData {
         return this.group_data;
     }
 }
-
-/*
-function logIt(value: object, key: string) {
-    console.log(key);
-    if (value instanceof Map) {
-        value.forEach(logIt);
-    } else {
-        const d: {start: Date, end: Date} = value as {start: Date, end: Date};
-        console.log(value);
-        console.log("             start:  " + d.start.toUTCString());
-        console.log("               end:  " + d.end.toUTCString());
-    }
-}
-
-const v: PostLoginData = new PostLoginData();
-
-const gd: Map<string, Map<string, Map<string, {start: Date, end: Date}>>> = v.getPostLoginData();
-
-console.log("-----------------------------------------------------------------");
-for (const g of gd ) {
-    console.log("Group:  " + g[0]);
-    for (const f of g[1] ) {
-        console.log("    Facility:  " + f[0]);
-        for (const d of f[1] ) {
-            console.log("        Department:  " + d[0]);
-            console.log("             start:  " + d[1].start);
-            console.log("               end:  " + d[1].end);
-        }
-    }
-}
-
-gd.forEach(logIt);
-
-
-*/
