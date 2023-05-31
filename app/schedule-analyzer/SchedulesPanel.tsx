@@ -20,7 +20,6 @@ function SchedulesPanel(
 
     const rows: object[] = [];
     all_schedules_data.forEach((value: ScheduleDataType, key: string) => {
-        console.log(key);
         rows.push({
             id: key,
             name: value.schedule_name,

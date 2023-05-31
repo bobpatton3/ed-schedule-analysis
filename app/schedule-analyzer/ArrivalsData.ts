@@ -76,29 +76,13 @@ export default class ArrivalsData {
 
     private calculateMaxY() {
         let maxy: number = 0.0;
-        [this.arrivals_data.Full, this.arrivals_data.lvl5CC].forEach(week => {
-            const weekMax: number = this.yMaxUtilSlice(week);
-            maxy = (maxy < weekMax) ? weekMax : maxy;
-        })
-        this.y_max = Math.ceil(maxy);
-        console.log("calculated Arrivals y_max: " + maxy);
-    }
-
-    private yMaxUtilSlice(week: WeekArrivalsDataType) {
-        let maxy: number = 0.0;
+        const week = this.arrivals_data.Full;
         [week.SUN, week.MON, week.TUE, week.WED, week.THU, week.FRI, week.SAT].forEach(day => {
-            const dayMax: number = this.yMaxUtilWeek(day);
-            maxy = (maxy < dayMax) ? dayMax : maxy;
+            day.forEach(hour => {
+                maxy = (maxy < hour) ? hour : maxy;
+            });
         });
-        return maxy;
-    }
-
-    private yMaxUtilWeek(day: number[]): number {
-        let maxy: number = 0.0;
-        day.forEach(hour => {
-            maxy = (maxy < hour) ? hour : maxy;
-        });
-        return maxy;
+        this.y_max = Math.ceil(maxy);
     }
 
     public getArrivalsData(): ArrivalsDataType {
@@ -109,7 +93,6 @@ export default class ArrivalsData {
     }
     public getMaxY(): number {
         this.calculateMaxY();
-        console.log("returning Arrivals y_max: " + this.y_max);
         return this.y_max;
     }
 }

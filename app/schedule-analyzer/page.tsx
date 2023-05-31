@@ -76,26 +76,12 @@ export default function ScheduleAnalyzer() {
         3. heat map!
         4. SchedulesPanel need to re-style the button and maybe move the checkbox to the end
         5. SchedulesPanel needs the UI enabledment for deleting a schedule
-
-
-        // the mapping:
-            status_header_data={statusHeaderData} 
-            arrivals_update_callback={updateArrivalsData}
-            curr_sched_cov_update_callback={updateCurrentScheduleAndCoverageData}
-            select_schedule_callback={setNewSelectedSchedule}
-            arrivals_data={arrivalsData}
-            coverage_data={currCovData}
-            maxY={maxY}
-            all_schedules_data={allSchedulesData}
-            all_schedules_update_callback={retrieveAllScheduleData}
-            current_schedule_data={currSchedData}
     */
 
     if (arrivalsData && currCovData) {
         return (
 
             <div className="baseAppPanel">
-
                 <div className="statusHeaderDiv">
                     <label className="edSchedStatusHdr">Facility: </label>
                     <label className="statusHeaderInfo">{statusHeaderData.facility_name}</label>
@@ -108,7 +94,6 @@ export default function ScheduleAnalyzer() {
                     <label className="edSchedStatusHdr">Schedule: </label>
                     <label className="statusHeaderInfo">{statusHeaderData.schedule_name} </label>
                 </div>
-
                 <div className="controlAndChartsDiv">
                     <div className="divLeft">
                         <Tabs>
@@ -124,9 +109,7 @@ export default function ScheduleAnalyzer() {
                             </Tab>
                             <Tab eventKey="schedule_design" title="Design">
                                 <div className="controlPanelDiv">
-                                    <div className="controlPanelDiv">
-                                        <ScheduleDesignPanel curr_sched_cov_update_callback={updateCurrentScheduleAndCoverageData} current_schedule_data={currSchedData} />
-                                    </div>
+                                    <ScheduleDesignPanel curr_sched_cov_update_callback={updateCurrentScheduleAndCoverageData} current_schedule_data={currSchedData} />
                                 </div>
                             </Tab>
                         </Tabs>

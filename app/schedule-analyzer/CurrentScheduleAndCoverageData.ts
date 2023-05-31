@@ -1,4 +1,3 @@
-import { Console } from "console";
 import { ScheduleDataType } from "./AllSchedulesData";
 
 export type WeekCoverageDataType = {
@@ -91,29 +90,13 @@ export default class CurrentScheduleAndCoverageData {
 
     private calculateMaxY() {
         let maxy: number = 0.0;
-        [this.coverage_data.Full, this.coverage_data.lvl5CC].forEach(week => {
-            const weekMax: number = this.yMaxUtilSlice(week);
-            maxy = (maxy < weekMax) ? weekMax : maxy;
-        })
-        this.y_max = Math.ceil(maxy);
-        console.log("calculated Coverage y_max: " + maxy);
-    }
-
-    private yMaxUtilSlice(week: WeekCoverageDataType) {
-        let maxy: number = 0.0;
+        const week = this.coverage_data.Full;
         [week.SUN, week.MON, week.TUE, week.WED, week.THU, week.FRI, week.SAT].forEach(day => {
-            const dayMax: number = this.yMaxUtilWeek(day);
-            maxy = (maxy < dayMax) ? dayMax : maxy;
+            day.forEach(hour => {
+                maxy = (maxy < hour) ? hour : maxy;
+            });
         });
-        return maxy;
-    }
-
-    private yMaxUtilWeek(day: number[]): number {
-        let maxy: number = 0.0;
-        day.forEach(hour => {
-            maxy = (maxy < hour) ? hour : maxy;
-        });
-        return maxy;
+        this.y_max = Math.ceil(maxy);
     }
 
     public getCoverageData(): CoverageDataType {
@@ -124,7 +107,6 @@ export default class CurrentScheduleAndCoverageData {
     }
     public getMaxY(): number {
         this.calculateMaxY();
-        console.log("returning Coverage y_max: " + this.y_max);
         return this.y_max;
     }
 
@@ -142,19 +124,6 @@ export default class CurrentScheduleAndCoverageData {
         return this.current_schedule;
     }
 
-    // Should no longer be necessary. Delete when certain.
-    private zeroOutCoverageData(): void {
-        Object.values(this.coverage_data).forEach((slice) => {
-            Object.values(slice).forEach((day) => { for (let i = 0; i < 25; i++) day[i] = 0; })
-        })
-    }
-
-    public printCoverageData(): void {
-        Object.entries(this.coverage_data).forEach(([sliceKey, sliceValue]) => {
-            console.log("Slice = " + sliceKey)
-            Object.entries(sliceValue).forEach(([dayKey, dayValue]) => { console.log(dayKey + ": " + dayValue) })
-        })
-    }
     private bitToDay: Array<keyof WeekCoverageDataType> = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT", "AVG"];
 
     private calculateCoverageData() {

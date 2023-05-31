@@ -42,8 +42,6 @@ const ArrivalsVsCoverageChart = ({
 
     const new_options = { ...default_options, title: title_options, yaxis: maxY_options };
 
-    console.log(maxY_options);
-
     return (
         <div>
             <Chart options={new_options} series={series} type="line" />

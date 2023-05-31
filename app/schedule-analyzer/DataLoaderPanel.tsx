@@ -5,7 +5,7 @@ import { useState } from "react";
 import { Button, FloatingLabel, Form } from "react-bootstrap";
 import PostLoginData from "./PostLoginData";
 import ArrivalsData, { ArrivalsDataType } from "./ArrivalsData";
-import CurrentScheduleAndCoverageData, { CoverageDataType, StatusHeaderDataType } from "./CurrentScheduleAndCoverageData";
+import CurrentScheduleAndCoverageData, { StatusHeaderDataType } from "./CurrentScheduleAndCoverageData";
 
 const DataLoaderPanel = (
     { arrivals_update_callback, retrieve_all_schedules_callback: all_schedules_update_callback }:
@@ -83,7 +83,6 @@ const DataLoaderPanel = (
         setChosenDepartment(e.target.value);
         setEarliestStartDate(dates.start);
         setLatestEndDate(dates.end);
-        console.log("onDepartmentSelect: " + dates.start.toUTCString() + "  :  " + dates.end.toUTCString());
         setDefaultDepartmentSelectOptionDisabled(true);
         setStartDatePickerDisabled(false);
         setLoadButtonDisabled(true);
@@ -91,7 +90,7 @@ const DataLoaderPanel = (
     };
 
     function onClickLoadButton(e: any) {
-        console.log(chosenGroup + "  :  " + chosenFacility + "  :  " + chosenDepartment + "  :  " + chosenStartDate!.toString() + "  :  " + chosenEndDate!.toString())
+        // TODO
     }
 
     function onClickFixedMonthsLoadButton(e: any) {
@@ -101,7 +100,6 @@ const DataLoaderPanel = (
 
         // TODO: chosen Dates below are not accurate when using the 3, 6, and 12 month buttons
         const presetsStartDate: Date = subtractDays(latestEndDate, e.target.value as number);
-        console.log("presetsStartDate: " + presetsStartDate);
 
         const status_header_data: StatusHeaderDataType = {
             facility_name: chosenFacility,
@@ -122,7 +120,7 @@ const DataLoaderPanel = (
 
     }
     function subtractDays(date: Date, days: number) {
-        var result = new Date(date);
+        const result = new Date(date);
         result.setDate(result.getDate() - days);
         return result;
     }
