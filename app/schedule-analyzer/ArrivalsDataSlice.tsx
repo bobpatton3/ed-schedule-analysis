@@ -5,6 +5,7 @@ import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
 import { WeekArrivalsDataType } from "./ArrivalsData";
 import { WeekCoverageDataType } from "./CurrentScheduleAndCoverageData";
+import PercentCapacityChart from "./PercentCapacityChart";
 
 const ArrivalsDataSlice = ({ dept_arrivals_data, dept_coverage_data, maxY }: { dept_arrivals_data: WeekArrivalsDataType, dept_coverage_data: WeekCoverageDataType, maxY: number }) => {
     return (
@@ -12,6 +13,9 @@ const ArrivalsDataSlice = ({ dept_arrivals_data, dept_coverage_data, maxY }: { d
             <Tabs transition={false} mountOnEnter={false} unmountOnExit={false} fill={true} justify={true}>
                 <Tab eventKey="all" title="All">
                     <ArrivalsVsCoverageChart day_of_week="All" day_arrivals_data={dept_arrivals_data.AVG} day_coverage_data={dept_coverage_data.AVG} maxY={maxY} />
+                </Tab>
+                <Tab eventKey="percent_cap" title="%Cap">
+                    <PercentCapacityChart day_arrivals_data={dept_arrivals_data.AVG} day_coverage_data={dept_coverage_data.AVG} />
                 </Tab>
                 <Tab eventKey="monday" title="Monday">
                     <ArrivalsVsCoverageChart day_of_week="Monday" day_arrivals_data={dept_arrivals_data.MON} day_coverage_data={dept_coverage_data.MON} maxY={maxY} />
