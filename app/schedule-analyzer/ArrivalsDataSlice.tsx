@@ -6,16 +6,24 @@ import Tabs from "react-bootstrap/Tabs";
 import { WeekArrivalsDataType } from "./ArrivalsData";
 import { WeekCoverageDataType } from "./CurrentScheduleAndCoverageData";
 import PercentCapacityChart from "./PercentCapacityChart";
+import WeekAtAGlanceChart from "./WeekAtAGlance";
+import HeatMap from "./HeatMap";
 
 const ArrivalsDataSlice = ({ dept_arrivals_data, dept_coverage_data, maxY }: { dept_arrivals_data: WeekArrivalsDataType, dept_coverage_data: WeekCoverageDataType, maxY: number }) => {
     return (
-        <div className="chartsPanelDiv">
+        <div className="tabPanelDiv">
             <Tabs transition={false} mountOnEnter={false} unmountOnExit={false} fill={true} justify={true}>
                 <Tab eventKey="all" title="All">
                     <ArrivalsVsCoverageChart day_of_week="All" day_arrivals_data={dept_arrivals_data.AVG} day_coverage_data={dept_coverage_data.AVG} maxY={maxY} />
                 </Tab>
                 <Tab eventKey="percent_cap" title="%Cap">
                     <PercentCapacityChart day_arrivals_data={dept_arrivals_data.AVG} day_coverage_data={dept_coverage_data.AVG} />
+                </Tab>
+                <Tab eventKey="week" title="Week">
+                    <WeekAtAGlanceChart dept_arrivals_data={dept_arrivals_data} dept_coverage_data={dept_coverage_data} />
+                </Tab>
+                <Tab eventKey="heatmap" title="HeatMap">
+                    <HeatMap dept_arrivals_data={dept_arrivals_data} dept_coverage_data={dept_coverage_data} />
                 </Tab>
                 <Tab eventKey="monday" title="Monday">
                     <ArrivalsVsCoverageChart day_of_week="Monday" day_arrivals_data={dept_arrivals_data.MON} day_coverage_data={dept_coverage_data.MON} maxY={maxY} />

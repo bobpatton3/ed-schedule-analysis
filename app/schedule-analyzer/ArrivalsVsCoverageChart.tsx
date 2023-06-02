@@ -43,7 +43,7 @@ const ArrivalsVsCoverageChart = ({
     const new_options = { ...default_options, title: title_options, yaxis: maxY_options };
 
     return (
-        <div>
+        <div className="tabPanelDiv">
             <Chart options={new_options} series={series} type="line" />
         </div>
     );

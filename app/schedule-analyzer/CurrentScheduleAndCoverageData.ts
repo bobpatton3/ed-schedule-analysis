@@ -30,8 +30,8 @@ export default class CurrentScheduleAndCoverageData {
     private current_schedule: ScheduleDataType = { owner: "", schedule_name: "", creationDate: new Date(), updateDate: new Date(), shifts: [], yearly_cost: 0 };
     private default_coverage_data: CoverageDataType;
     private y_max: number;
-    private phys_peak_capacity = 9.0;
-    private app_peak_capacity = 6.0;
+    private phys_peak_capacity = 8.0;
+    private app_peak_capacity = 5.5;
     private phys_profile = [1.5, 1.2, 1.1, 1.0, 0.9, 0.8, 0.5 ];
     private app_profile = [1.3, 1.1, 1.0, 1.0, 1.0, 1.0, 0.6 ];
 
