@@ -70,6 +70,9 @@ export default function ScheduleAnalyzer() {
         }
     }
 
+    function updateSchedAndCovWhenShiftModified(shift_id: string, start: number, duration: number,) {
+    }
+
     /* TODOs:
         1. Deal with the whole Date conversion and UTC time problem
         2. Add functionality to the ScheduleDesignPanel

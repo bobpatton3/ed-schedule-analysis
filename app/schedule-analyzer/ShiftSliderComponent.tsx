@@ -9,19 +9,19 @@ const minDistance = 4;
 function ShiftSliderComponent(
     {
         coverage_update_callback,
-        shift,
+        shift_id,
         start,
         duration,
     }: {
         coverage_update_callback: (newData: CoverageDataType) => void;
-        shift: string;
+        shift_id: string;
         start: number;
         duration: number;
     }
 ) {
     //const dataAccessor: PostLoginData = new PostLoginData();
     //const postLoginData: Map<string, Map<string, Map<string, { start: Date, end: Date }>>> = dataAccessor.getPostLoginData();
-    const [value1, setValue1] = useState<number[]>([start, start + duration]);
+    const [values, setValues] = useState<number[]>([start, start + duration]);
 
     const handleChange1 = (
         event: Event,
@@ -33,15 +33,15 @@ function ShiftSliderComponent(
         }
 
         if (activeThumb === 0) {
-            setValue1([Math.min(newValue[0], value1[1] - minDistance), value1[1]]);
+            setValues([Math.min(newValue[0], values[1] - minDistance), values[1]]);
         } else {
-            setValue1([value1[0], Math.max(newValue[1], value1[0] + minDistance)]);
+            setValues([values[0], Math.max(newValue[1], values[0] + minDistance)]);
         }
 
         // There is no reason to allow this part of the slider to be used for start times. 
-        // Users should use the left portion of the slider for midnight on starts.
+        // Users should use the left portion of the slider for shift start times at midnight or later.
         if (newValue[0] > 23)
-            setValue1([23, newValue[1]]);
+            setValues([23, newValue[1]]);
     };
 
     const marks = [
@@ -66,10 +66,10 @@ function ShiftSliderComponent(
 
     return (
         <div>
-            {startStopTextFromSlider(value1)}
+            {startStopTextFromSlider(values)}
             <Slider
                 className='slider'
-                value={value1}
+                value={values}
                 step={1}
                 min={0}
                 max={35}

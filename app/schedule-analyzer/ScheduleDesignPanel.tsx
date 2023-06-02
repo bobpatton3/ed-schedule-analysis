@@ -18,7 +18,7 @@ function ScheduleDesignPanel(
             {current_schedule_data.shifts.map((shift) => <ShiftSliderComponent
                 key={shift.id}
                 coverage_update_callback={coverage_update_callback}
-                shift={shift.id}
+                shift_id={shift.id}
                 start={shift.start}
                 duration={shift.duration} />)}
         </div>
