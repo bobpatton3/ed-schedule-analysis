@@ -18,10 +18,14 @@ function SchedulesPanel(
         select_schedule_callback(id.toString());
     };
 
+    const onClickDeleteScheduleButton = (id: GridRowId): void => {
+        console.log('delete schedule functionality coming soon!');
+    };
+
     const rows: object[] = [];
     all_schedules_data.forEach((value: ScheduleDataType, key: string) => {
         rows.push({
-            id: key,
+            id: value.pk,
             name: value.schedule_name,
             creator: value.owner,
             yearly_cost: value.yearly_cost,
@@ -31,12 +35,28 @@ function SchedulesPanel(
 
     const columns: GridColDef[] = [
         {
+            field: 'Del?',
+            width: 60,
+            align: "center",
+            renderCell: (params) => (
+                <Button
+                    onClick={() => onClickDeleteScheduleButton(params.id)}
+                    className="scheduleDeleteButton"
+                >&#8212;</Button>
+            )
+        },
+        {
             field: 'name',
             headerName: 'Name',
             width: 200,
             align: 'left',
             renderCell: (params) => (
-                <Button onClick={() => onClickScheduleNameButton(params.id)}>{params.value}</Button>
+                <Button
+                    onClick={() => onClickScheduleNameButton(params.id)}
+                    className="scheduleListButton"
+                >
+                    {params.value}
+                </Button>
             ),
         },
         {
@@ -60,12 +80,11 @@ function SchedulesPanel(
     ];
 
     return (
-        <div className="schedulesPanelDiv">
+        <div className="tabPanelDiv">
             <DataGrid
                 rows={rows}
                 columns={columns}
-                hideFooter={true}
-                checkboxSelection={true} />
+                hideFooter={true} />
         </div>
     );
 }

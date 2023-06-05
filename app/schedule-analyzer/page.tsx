@@ -6,12 +6,17 @@ import CurrentScheduleAndCoverageData, {
     CoverageDataType,
     StatusHeaderDataType,
 } from "./CurrentScheduleAndCoverageData";
-import AllSchedulesData, { ScheduleDataType } from "./AllSchedulesData";
-import { Tab, Tabs } from "react-bootstrap";
+import AllSchedulesData, { ScheduleDataType, ShiftDataType } from "./AllSchedulesData";
+import { Button, Container, Tab, Tabs } from "react-bootstrap";
 import DataLoaderPanel from "./DataLoaderPanel";
 import SchedulesPanel from "./SchedulesPanel";
-import ScheduleDesignPanel from "./ScheduleDesignPanel";
 import ArrivalsDataSlice from "./ArrivalsDataSlice";
+import ShiftSliderComponent from "./ShiftSliderComponent";
+import { Box } from "@mui/material";
+
+// toggling the use of a prefix on the ShiftSliderComponent's key ensures the Designer tab
+// gets refreshed by clicking on the same schedule again in the SchedulesPanel (its a React issue!)
+let usePrefix: boolean = false;
 
 export default function ScheduleAnalyzer() {
     const todaysDate: Date = new Date();
@@ -27,19 +32,18 @@ export default function ScheduleAnalyzer() {
     const [arrivalsData, setArrivalsData] = useState<ArrivalsDataType>(
         arrivalsDataManager.getDefaultArrivalsData()
     );
-
-    function retrieveAllScheduleData(group: string, facility: string, department: string): void {
-        allSchedulesDataManager.retrieveAllSchedulesData(group, facility, department);
-    }
-
     const allSchedulesDataManager: AllSchedulesData = new AllSchedulesData();
 
     const [allSchedulesData, setAllSchedulesData] = useState<Map<string, ScheduleDataType>>(
         allSchedulesDataManager.getAllSchedulesData()
     );
 
+    function retrieveAllScheduleData(group: string, facility: string, department: string): void {
+        allSchedulesDataManager.retrieveAllSchedulesData(group, facility, department);
+    }
+
     const curr_sched_cov_data: CurrentScheduleAndCoverageData = new CurrentScheduleAndCoverageData();
-    const [currCovData, setCurrCovData] = useState<CoverageDataType>(curr_sched_cov_data.getDefaultCoverageData());
+    const [currCovData, setCurrCovData] = useState<CoverageDataType>(curr_sched_cov_data.getCoverageData());
     const [currSchedData, setCurrSchedData] = useState<ScheduleDataType>(curr_sched_cov_data.getCurrentSchedule());
 
     function updateArrivalsData(arrivals_data: ArrivalsDataType,
@@ -48,18 +52,15 @@ export default function ScheduleAnalyzer() {
         setStatusHeaderData(status_header_data);
     }
 
-    // this is passed down into ShiftSliderComponent but is not yet called
-    function updateCurrentScheduleAndCoverageData(newData: CoverageDataType) {
-        setCurrCovData(newData);
-
-        // TODO: statusHeaderData.schedule_name = newData
-    }
-
     function setNewSelectedSchedule(pk: string) {
         const selectedSched: ScheduleDataType | undefined = allSchedulesData.get(pk);
+
         if (selectedSched) {
-            setCurrSchedData(selectedSched);
+            // Some of these below seem redundant but this statemanagement thing is a bit tricky
+            // I could change getCoverageData to be a utility function that you pass the schedule in to which would 
+            // preclude needing to maintain any state within curr_sched_cov_data
             curr_sched_cov_data.setCurrentSchedule(selectedSched);
+            setCurrSchedData(selectedSched);
             setCurrCovData(curr_sched_cov_data.getCoverageData());
 
             const covMaxY = curr_sched_cov_data.getMaxY();
@@ -67,19 +68,72 @@ export default function ScheduleAnalyzer() {
             setMaxY(covMaxY < arrMaxY ? arrMaxY : covMaxY);
             const newStatusHeaderData = { ...statusHeaderData, schedule_name: selectedSched.schedule_name };
             setStatusHeaderData(newStatusHeaderData);
+            usePrefix = !usePrefix;
         }
     }
 
-    function updateSchedAndCovWhenShiftModified(shift_id: string, start: number, duration: number,) {
+    function updateSchedAndCovWhenShiftModified(shift_data: ShiftDataType) {
+        // TODO - implement!
+        Object.entries(shift_data).forEach((v, k) => console.log(`${v[0]} = ${v[1]}`));
+        let newSchedData: ScheduleDataType = { ...currSchedData };
+        Object.entries(newSchedData).forEach((v, k) => console.log(`${v[0]} = ${v[1]}`));
+        Object.entries(newSchedData.shifts).forEach((v, k) => console.log(`${v[0]} = ${v[1].id},  ${v[1].duration},  ${v[1].providerType}`));
+
+        let newShifts: Map<string, ShiftDataType> = new Map<string, ShiftDataType>(newSchedData.shifts);
+        newShifts.set(shift_data.id, shift_data);
+        newSchedData.shifts = newShifts;
+        setCurrSchedData(newSchedData);
+        // Some of these below seem redundant but this statemanagement thing is a bit tricky
+        // I could change getCoverageData to be a utility function that you pass the schedule in to which would 
+        // preclude needing to maintain any state within curr_sched_cov_data
+        curr_sched_cov_data.setCurrentSchedule(newSchedData);
+        setCurrCovData(curr_sched_cov_data.getCoverageData());
+    }
+
+    function addShift(provType: string) {
+        let idval: number = 0;
+        for (let i = 0; i < currentScheduleShiftsArray.length; i++) idval = (idval < parseInt(currentScheduleShiftsArray[i].id)) ? parseInt(currentScheduleShiftsArray[i].id) : idval;
+        idval += 1;
+        const newShift: ShiftDataType = { id: idval.toString(), start: 8, duration: 8, deleteFlag: false, daysOfWeek: [true, true, true, true, true, true, true,], providerType: provType };
+
+        console.log("newShift added with idval = " + idval);
+        updateSchedAndCovWhenShiftModified(newShift);
+    }
+
+    function clearForNewDesign() {
+        // TODO: hard-coded my username
+        let newSchedule: ScheduleDataType = {
+            pk: "temp",
+            owner: "bpatton",
+            schedule_name: "NEW SCHED",
+            creationDate: new Date(),
+            updateDate: new Date(),
+            yearly_cost: 0.0,
+            shifts: new Map<string, ShiftDataType>(),
+        };
+        setCurrSchedData(newSchedule);
+        // Some of these below seem redundant but this statemanagement thing is a bit tricky
+        // I could change getCoverageData to be a utility function that you pass the schedule in to which would 
+        // preclude needing to maintain any state within curr_sched_cov_data
+        curr_sched_cov_data.setCurrentSchedule(newSchedule);
+        setCurrCovData(curr_sched_cov_data.getCoverageData());
+    }
+
+    function saveScheduleChanges() {
+        console.log("TODO: save schedule changes coming");
     }
 
     /* TODOs:
-        1. Deal with the whole Date conversion and UTC time problem
-        2. Add functionality to the ScheduleDesignPanel
-        3. heat map!
-        4. SchedulesPanel need to re-style the button and maybe move the checkbox to the end
-        5. SchedulesPanel needs the UI enabledment for deleting a schedule
+        1. Heat Map core works but needs all the surrounding bits and styling
+        2. Damn! I think we are ready to start on the server-side!
+        2. Deal with the whole Date conversion and UTC time problem (Not a  big issue at the moment. Delay until after the server-side is done.)
     */
+
+    const currentScheduleShiftsArray: ShiftDataType[] = Array.from(currSchedData.shifts.values());
+    const physScheduleShiftsArray: ShiftDataType[] = currentScheduleShiftsArray.filter((shift) => (shift.providerType === "PHYS"));
+    const appScheduleShiftsArray: ShiftDataType[] = currentScheduleShiftsArray.filter((shift) => (shift.providerType === "APP"));
+    physScheduleShiftsArray.sort((a, b) => (a.start - b.start) ? (a.start - b.start) : (a.duration - b.duration));
+    appScheduleShiftsArray.sort((a, b) => (a.start - b.start) ? (a.start - b.start) : (a.duration - b.duration));
 
     if (arrivalsData && currCovData) {
         return (
@@ -101,18 +155,36 @@ export default function ScheduleAnalyzer() {
                     <div className="divLeft">
                         <Tabs>
                             <Tab eventKey="data_loader" title="Data Loader">
-                                <div className="controlPanelDiv">
-                                    <DataLoaderPanel arrivals_update_callback={updateArrivalsData} retrieve_all_schedules_callback={retrieveAllScheduleData} />
-                                </div>
+                                <DataLoaderPanel arrivals_update_callback={updateArrivalsData} retrieve_all_schedules_callback={retrieveAllScheduleData} />
                             </Tab>
                             <Tab eventKey="existing_schedules" title="Schedules">
-                                <div className="controlPanelDiv">
-                                    <SchedulesPanel select_schedule_callback={setNewSelectedSchedule} all_schedules_data={allSchedulesData} />
-                                </div>
+                                <SchedulesPanel select_schedule_callback={setNewSelectedSchedule} all_schedules_data={allSchedulesData} />
                             </Tab>
-                            <Tab eventKey="schedule_design" title="Design">
-                                <div className="controlPanelDiv">
-                                    <ScheduleDesignPanel curr_sched_cov_update_callback={updateCurrentScheduleAndCoverageData} current_schedule_data={currSchedData} />
+                            <Tab eventKey="schedule_design" title="Designer">
+                                <div className="scroll">
+                                    <div className="tabPanelDiv">
+                                        <div className="providerTypeDivs">Physician shifts:
+                                            <Button className="addShiftsButton" onClick={() => addShift("PHYS")}>+</Button>
+                                            <Button className="newScheduleButton" onClick={clearForNewDesign}>Design New Schedule</Button>
+                                            <Button className="saveChangesButton" onClick={saveScheduleChanges}>Save Changes</Button>
+                                        </div>
+                                        {physScheduleShiftsArray.map((shift) =>
+                                            <ShiftSliderComponent
+                                                key={(usePrefix) ? 1000 + shift.id : shift.id}
+                                                shift_mod_callback={updateSchedAndCovWhenShiftModified}
+                                                shift={shift}
+                                            />)}
+                                    </div>
+                                    <div className="tabPanelDiv">
+                                        <div className="providerTypeDivs">APP shifts:
+                                            <Button className="addShiftsButton" onClick={() => addShift("APP")}>+</Button></div>
+                                        {appScheduleShiftsArray.map((shift) =>
+                                            <ShiftSliderComponent
+                                                key={(usePrefix) ? 1000 + shift.id : shift.id}
+                                                shift_mod_callback={updateSchedAndCovWhenShiftModified}
+                                                shift={shift}
+                                            />)}
+                                    </div>
                                 </div>
                             </Tab>
                         </Tabs>
@@ -134,3 +206,4 @@ export default function ScheduleAnalyzer() {
         );
     }
 }
+

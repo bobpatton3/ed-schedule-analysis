@@ -1,28 +1,31 @@
 "use client";
 
-import { CoverageDataType } from "./CurrentScheduleAndCoverageData";
+import React from "react";
+import { ScheduleDataType, ShiftDataType } from "./AllSchedulesData";
 import ShiftSliderComponent from "./ShiftSliderComponent";
-import { ScheduleDataType } from "./AllSchedulesData";
 
-function ScheduleDesignPanel(
+const ScheduleDesignPanel = (
     {
-        curr_sched_cov_update_callback: coverage_update_callback,
         current_schedule_data,
+        shift_mod_callback,
     }: {
-        curr_sched_cov_update_callback: (newData: CoverageDataType) => void;
         current_schedule_data: ScheduleDataType;
+        shift_mod_callback: (shift_data: ShiftDataType) => void;
     }
-) {
+) => {
+    //
+
     return (
-        <div className="schedulesPanelDiv">
-            {current_schedule_data.shifts.map((shift) => <ShiftSliderComponent
-                key={shift.id}
-                coverage_update_callback={coverage_update_callback}
-                shift_id={shift.id}
-                start={shift.start}
-                duration={shift.duration} />)}
+        <div className="tabPanelDiv">
+            {Array.from(current_schedule_data.shifts.values()).map((shift) =>
+                <ShiftSliderComponent
+                    key={shift.id}
+                    shift_mod_callback={shift_mod_callback}
+                    shift={shift}
+                />)}
         </div>
     );
 }
 
 export default ScheduleDesignPanel;
+

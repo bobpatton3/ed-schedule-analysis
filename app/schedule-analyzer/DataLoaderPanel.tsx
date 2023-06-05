@@ -8,7 +8,7 @@ import ArrivalsData, { ArrivalsDataType } from "./ArrivalsData";
 import CurrentScheduleAndCoverageData, { StatusHeaderDataType } from "./CurrentScheduleAndCoverageData";
 
 const DataLoaderPanel = (
-    { arrivals_update_callback, retrieve_all_schedules_callback: all_schedules_update_callback }:
+    { arrivals_update_callback, retrieve_all_schedules_callback }:
         {
             arrivals_update_callback: (arrivals_data: ArrivalsDataType, status_header_data: StatusHeaderDataType,) => void,
             retrieve_all_schedules_callback: (group: string, facility: string, department: string) => void,
@@ -109,7 +109,7 @@ const DataLoaderPanel = (
             schedule_name: ""
         };
         //const allSchedulesData: AllSchedulesData = new AllSchedulesData();
-        all_schedules_update_callback(chosenGroup, chosenFacility, chosenDepartment);
+        retrieve_all_schedules_callback(chosenGroup, chosenFacility, chosenDepartment);
 
         if (e.target.value == 182) {
             const ad: ArrivalsDataType = arrData.getDefaultArrivalsData();
@@ -119,6 +119,7 @@ const DataLoaderPanel = (
         }
 
     }
+
     function subtractDays(date: Date, days: number) {
         const result = new Date(date);
         result.setDate(result.getDate() - days);
@@ -126,8 +127,7 @@ const DataLoaderPanel = (
     }
 
     return (
-
-        <div>
+        <div className="tabPanelDiv">
             <FloatingLabel controlId="floatingSelect" label="Group:" className="dataLoaderLabel">
                 <Form.Select onChange={onGroupSelect} >
                     <option disabled={defaultGroupSelectOptionDisabled}>Choose your desired group</option>
@@ -147,9 +147,11 @@ const DataLoaderPanel = (
                 </Form.Select>
             </FloatingLabel>
             <div className="dataLoaderLabel" >Load the most recent # months:</div>
-            <Button variant="outline-primary" onClick={onClickFixedMonthsLoadButton} disabled={loadFixedMonthsDisabled} className="setMonthsButtons" value={91}>3</Button>
-            <Button variant="outline-primary" onClick={onClickFixedMonthsLoadButton} disabled={loadFixedMonthsDisabled} className="setMonthsButtons" value={182}>6</Button>
-            <Button variant="outline-primary" onClick={onClickFixedMonthsLoadButton} disabled={loadFixedMonthsDisabled} className="setMonthsButtons" value={364}>12</Button>
+            <div >
+                <Button variant="outline-primary" onClick={onClickFixedMonthsLoadButton} disabled={loadFixedMonthsDisabled} className="setMonthsButtons" value={91}>3</Button>
+                <Button variant="outline-primary" onClick={onClickFixedMonthsLoadButton} disabled={loadFixedMonthsDisabled} className="setMonthsButtons" value={182}>6</Button>
+                <Button variant="outline-primary" onClick={onClickFixedMonthsLoadButton} disabled={loadFixedMonthsDisabled} className="setMonthsButtons" value={364}>12</Button>
+            </div>
 
             <div className="dataLoaderLabel" >Load Custom Date Range:</div>
 

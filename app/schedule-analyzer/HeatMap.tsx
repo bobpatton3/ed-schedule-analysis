@@ -41,30 +41,33 @@ function HeatMap(
         seriesVertices.push(percent_of_peak);
     }
 
-    const series: number[][][] = new Array<Array<Array<number>>>();
+    const series = new Map<number, Array<Array<number>>>();
     for (let i = 0; i < 7 * 17; i++) {
         const row = new Array<Array<number>>();
         for (let j = 0; j < 24 * 17; j++) {
             row.push([0, 0]);
         }
-        series.push(row);
+        series.set(i, row);
     }
 
     for (let i = 0; i < 7; i++) {
         for (let j = 0; j < 24; j++) {
             for (let k = 0; k < 17; k++) {
                 for (let l = 0; l < 17; l++) {
-                    if (((i * 17 + k) * 1000 + j * 17 + l) === 0) console.log("key is zero for " + i + ", " + j + ", " + k + ", " + l);
-                    if ((l === 0 && j % 3 === 0) || k === 0) {
-                        series[i * 17 + k][j * 17 + l][0] = ((i * 17 + k) * 1000) + j * 17 + l;
-                        series[i * 17 + k][j * 17 + l][1] = 1000000;
-                    } else {
-                        series[i * 17 + k][j * 17 + l][0] = ((i * 17 + k) * 1000) + j * 17 + l;
-                        series[i * 17 + k][j * 17 + l][1] =
-                            (l * k * seriesVertices[i + 1][j + 1] +
-                                l * (17 - k) * seriesVertices[i][j + 1] +
-                                (17 - l) * k * seriesVertices[i + 1][j] +
-                                (17 - l) * (17 - k) * seriesVertices[i][j]) / 289.0;
+                    const row = series.get(i * 17 + k);
+                    if (row) {
+                        if ((l === 0 && j % 3 === 0) || k === 0) {
+                            row[j * 17 + l][0] = ((i * 17 + k) * 1000) + j * 17 + l;
+                            row[j * 17 + l][0] = ((i * 17 + k) * 1000) + j * 17 + l;
+                            row[j * 17 + l][1] = 1000000;
+                        } else {
+                            row[j * 17 + l][0] = ((i * 17 + k) * 1000) + j * 17 + l;
+                            row[j * 17 + l][1] =
+                                (l * k * seriesVertices[i + 1][j + 1] +
+                                    l * (17 - k) * seriesVertices[i][j + 1] +
+                                    (17 - l) * k * seriesVertices[i + 1][j] +
+                                    (17 - l) * (17 - k) * seriesVertices[i][j]) / 289.0;
+                        }
                     }
                 }
             }
@@ -83,7 +86,7 @@ function HeatMap(
         let retVal: string = "#0000ff";  // default color of blue
         if (val === 1000000) {
             retVal = "#f0f0f0";
-        } else if (val < 60) {
+        } else if (val <= 60) {
             retVal = "#0000ff";
         } else if (val > 60 && val <= 70) {
             const portion: number = Math.ceil((25.5 * (70 - val)));
@@ -122,7 +125,7 @@ function HeatMap(
         let retVal: string = "#5555ff";  // default color of blue
         if (val === 1000000) {
             retVal = "#888888";
-        } else if (val < 60) {
+        } else if (val <= 60) {
             retVal = "#5555ff";
         } else if (val > 60 && val <= 70) {
             const portion: number = Math.ceil(17 * (70 - val));
@@ -150,22 +153,11 @@ function HeatMap(
         return retVal;
     }
 
-    series.map(row => {
-        row.map(([k, v]) => {
-            if (k === 0) console.log("key = " + k + ", v = " + v);
-        }
-        )
-    });
-
     return (
         <div className="tabPanelDiv" >
             <table>
                 <tbody>
-                    {series.map(row => <tr> {
-                        row.map(([k, v]) =>
-                            <td key={k} style={{ backgroundColor: numberToRGB2(v) }} />)}
-                    </tr>
-                    )}
+                    {Array.from(series.entries()).map(([rowkey, row]) => <tr key={rowkey} > {row.map(([k, v]) => <td key={k} style={{ backgroundColor: numberToRGB2(v) }} />)} </tr>)}
                 </tbody>
             </table>
         </div>

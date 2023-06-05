@@ -60,7 +60,7 @@ export default function PercentCapacityChartOptions(maxY: number) {
       offsetY: 0,
       floating: false,
       style: {
-        fontSize: "18px",
+        fontSize: "14px",
         fontWeight: "bold",
         fontFamily: undefined,
         color: "#263238",
@@ -78,7 +78,7 @@ export default function PercentCapacityChartOptions(maxY: number) {
       title: {
         text: "Hour of Day",
         style: {
-          fontSize: "14px",
+          fontSize: "12px",
           fontWeight: "bold",
           fontFamily: undefined,
           color: "#263238",
@@ -97,7 +97,7 @@ export default function PercentCapacityChartOptions(maxY: number) {
       title: {
         text: "",
         style: {
-          fontSize: "14px",
+          fontSize: "12px",
           fontWeight: "bold",
           fontFamily: undefined,
           color: "#263238",
