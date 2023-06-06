@@ -124,8 +124,7 @@ export default function ScheduleAnalyzer() {
     }
 
     /* TODOs:
-        1. Heat Map core works but needs all the surrounding bits and styling
-        2. Damn! I think we are ready to start on the server-side!
+        1. Damn! I think we are ready to start on the server-side!
         2. Deal with the whole Date conversion and UTC time problem (Not a  big issue at the moment. Delay until after the server-side is done.)
     */
 

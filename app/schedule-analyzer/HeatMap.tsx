@@ -41,10 +41,12 @@ function HeatMap(
         seriesVertices.push(percent_of_peak);
     }
 
+    const pix: number = 16;
+
     const series = new Map<number, Array<Array<number>>>();
-    for (let i = 0; i < 7 * 17; i++) {
+    for (let i = 0; i < 7 * pix; i++) {
         const row = new Array<Array<number>>();
-        for (let j = 0; j < 24 * 17; j++) {
+        for (let j = 0; j < 24 * pix; j++) {
             row.push([0, 0]);
         }
         series.set(i, row);
@@ -52,21 +54,19 @@ function HeatMap(
 
     for (let i = 0; i < 7; i++) {
         for (let j = 0; j < 24; j++) {
-            for (let k = 0; k < 17; k++) {
-                for (let l = 0; l < 17; l++) {
-                    const row = series.get(i * 17 + k);
+            for (let k = 0; k < pix; k++) {
+                for (let l = 0; l < pix; l++) {
+                    const row = series.get(i * pix + k);
                     if (row) {
+                        row[j * pix + l][0] = ((i * pix + k) * 1000) + j * pix + l;
                         if ((l === 0 && j % 3 === 0) || k === 0) {
-                            row[j * 17 + l][0] = ((i * 17 + k) * 1000) + j * 17 + l;
-                            row[j * 17 + l][0] = ((i * 17 + k) * 1000) + j * 17 + l;
-                            row[j * 17 + l][1] = 1000000;
+                            row[j * pix + l][1] = 1000000;
                         } else {
-                            row[j * 17 + l][0] = ((i * 17 + k) * 1000) + j * 17 + l;
-                            row[j * 17 + l][1] =
+                            row[j * pix + l][1] =
                                 (l * k * seriesVertices[i + 1][j + 1] +
-                                    l * (17 - k) * seriesVertices[i][j + 1] +
-                                    (17 - l) * k * seriesVertices[i + 1][j] +
-                                    (17 - l) * (17 - k) * seriesVertices[i][j]) / 289.0;
+                                    l * (pix - k) * seriesVertices[i][j + 1] +
+                                    (pix - l) * k * seriesVertices[i + 1][j] +
+                                    (pix - l) * (pix - k) * seriesVertices[i][j]) / pix ** 2;
                         }
                     }
                 }
@@ -74,47 +74,7 @@ function HeatMap(
         }
     }
 
-
     function numberToRGB(val: number): string {
-        //0-60 is blue #0000FF
-        //60-70 transitions blue to green "#00FF00"
-        //70-80 green to yellow "#FFFF00"
-        //80-90 yellow
-        //90-100 yellow to orange "#FF8800"
-        //100-110 transitions orange to red "#FF0000"
-
-        let retVal: string = "#0000ff";  // default color of blue
-        if (val === 1000000) {
-            retVal = "#f0f0f0";
-        } else if (val <= 60) {
-            retVal = "#0000ff";
-        } else if (val > 60 && val <= 70) {
-            const portion: number = Math.ceil((25.5 * (70 - val)));
-            let BB: string = portion.toString(16);
-            if (BB.length === 1) BB = "0" + BB;
-            let GG: string = (255 - portion).toString(16);
-            if (GG.length === 1) GG = "0" + GG;
-            retVal = "#00" + GG + BB;
-        } else if (val > 70 && val <= 80) {
-            const portion: number = Math.ceil((25.5 * (val - 70)));
-            let RR: string = portion.toString(16);
-            if (RR.length === 1) RR = "0" + RR;
-            retVal = "#" + RR + "ff00";
-        } else if (val > 80 && val <= 90) {
-            retVal = "#ffff00";
-        } else if (val > 90 && val <= 110) {
-            const portion: number = Math.ceil((255 * (110.0 - val) / 20.0));
-            let GG: string = portion.toString(16);
-            if (GG.length === 1) GG = "0" + GG;
-            retVal = "#ff" + GG + "00";
-        } else if (val > 110) {
-            retVal = "#ff0000";
-        }
-
-        return retVal;
-    }
-
-    function numberToRGB2(val: number): string {
         //0-60 is blue #5555ff
         //60-70 transitions blue to green "#55ff55"
         //70-80 green to yellow "#FFFF55"
@@ -142,7 +102,7 @@ function HeatMap(
         } else if (val > 80 && val <= 90) {
             retVal = "#ffff55";
         } else if (val > 90 && val <= 110) {
-            const portion: number = Math.ceil((170 * (110.0 - val) / 20.0));
+            const portion: number = Math.ceil((170.0 * (110.0 - val) / 20.0));
             let GG: string = (85 + portion).toString(16);
             if (GG.length === 1) GG = "0" + GG;
             retVal = "#ff" + GG + "55";
@@ -155,11 +115,41 @@ function HeatMap(
 
     return (
         <div className="tabPanelDiv" >
-            <table>
-                <tbody>
-                    {Array.from(series.entries()).map(([rowkey, row]) => <tr key={rowkey} > {row.map(([k, v]) => <td key={k} style={{ backgroundColor: numberToRGB2(v) }} />)} </tr>)}
-                </tbody>
-            </table>
+            <div className="heatMapTitleDiv" >Week-At-A-Glance</div>
+            <div className="heatMapDivLeft" >
+                <table>
+                    <tr> <td className="heatMapDayLabels">Sun</td></tr>
+                    <tr> <td className="heatMapDayLabels">Mon</td></tr>
+                    <tr> <td className="heatMapDayLabels">Tue</td></tr>
+                    <tr> <td className="heatMapDayLabels">Wed</td></tr>
+                    <tr> <td className="heatMapDayLabels">Thu</td></tr>
+                    <tr> <td className="heatMapDayLabels">Fri</td></tr>
+                    <tr> <td className="heatMapDayLabels">Sat</td></tr>
+                    <tr> <td className="heatMapDayLabels">Sun</td></tr>
+                </table>
+            </div>
+            <div className="heatMapDivRight" >
+                <table className="heatMapTable">
+                    <tbody>
+                        {Array.from(series.entries()).map(([rowkey, row]) => <tr key={rowkey} > {row.map(([k, v]) => <td key={k} style={{ backgroundColor: numberToRGB(v) }} />)} </tr>)}
+                        <tr key='256' > {series.get(0)!.map(([k, v]) => <td key={k} style={{ backgroundColor: numberToRGB(v) }} />)} </tr>
+                    </tbody>
+                </table>
+                <table>
+                    <tr>
+                        <td className="heatMapHourLabels">&nbsp;0</td>
+                        <td className="heatMapHourLabels">&nbsp;3</td>
+                        <td className="heatMapHourLabels">&nbsp;6</td>
+                        <td className="heatMapHourLabels">&nbsp;9</td>
+                        <td className="heatMapHourLabels">12</td>
+                        <td className="heatMapHourLabels">15</td>
+                        <td className="heatMapHourLabels">18</td>
+                        <td className="heatMapHourLabels">21</td>
+                        <td className="heatMapHourLabels">24</td>
+                    </tr>
+                </table>
+            </div>
+            <div className="heatMapXAxisUnitDiv" >Hour of Day</div>
         </div>
     );
 }
