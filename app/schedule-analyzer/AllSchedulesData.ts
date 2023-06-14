@@ -1,3 +1,5 @@
+import { Dispatch, SetStateAction } from "react";
+
 export type ShiftDataType = {
     id: string,
     start: number,
@@ -18,58 +20,57 @@ export type ScheduleDataType = {
 }
 
 export default class AllSchedulesData {
-    private schedules: Map<string, ScheduleDataType> = new Map<string, ScheduleDataType>();
-    private empty_schedule: ScheduleDataType = {pk: "0", owner: "", schedule_name: "", creationDate: new Date(), updateDate: new Date(), shifts: new Map<string, ShiftDataType>(), yearly_cost: 0.0 };
 
-    public retrieveAllSchedulesData(group: string, facility: string, department: string) {
-        // TODO: go to server and retrieve the 
-        const shifts1: Map<string, ShiftDataType> = new Map<string, ShiftDataType>();
-        shifts1.set("1", { id: "1", start: 8, duration: 8, daysOfWeek: [true,true,true,true,true,true,true,], providerType: "PHYS" });
-        shifts1.set("2", { id: "2", start: 15, duration: 8, daysOfWeek: [true,true,true,true,true,true,true,], providerType: "PHYS" });
-        shifts1.set("3", { id: "3", start: 11, duration: 8, daysOfWeek: [true,true,true,true,true,true,true,], providerType: "PHYS" });
-        shifts1.set("4", { id: "4", start: 18, duration: 8, daysOfWeek: [true,true,true,true,true,true,true,], providerType: "PHYS" });
-        shifts1.set("5", { id: "5", start: 22, duration: 10, daysOfWeek: [true,true,true,true,true,true,true,], providerType: "PHYS" });
-        shifts1.set("6", { id: "6", start: 9, duration: 12, daysOfWeek: [true,true,true,true,true,true,true,], providerType: "APP" });
+    public async retrieveAllSchedulesData(
+        group: string, 
+        facility: string, 
+        department: string, 
+        setStateCallback: Dispatch<SetStateAction<Map<string, ScheduleDataType>>>
+    ) {
 
-        const pk1 = "1";
-        const owner: string = "bpatton";
-        const schedule_name1: string = "Bobs First Schedule Design";
-        const sched1: ScheduleDataType = { pk: pk1, owner: owner, schedule_name: schedule_name1, creationDate: new Date(2023, 5, 1), updateDate: new Date(2023, 5, 11), shifts: shifts1, yearly_cost: 11.1 }
+        // http://localhost:8080/schedules/A1%20Emergency%20Physicians/Memorial%20Hospital/Main%20ED
+        const res = await fetch(`http://localhost:8080/schedules/A1%20Emergency%20Physicians/Memorial%20Hospital/Main%20ED`);
+        const schedulesAPIResp = res.json();
+           
+        const schedulesData = await Promise.all([schedulesAPIResp]);
 
-        this.schedules.set(pk1, sched1);
-
-        // For updates to ShiftSliderComponent to work all shifts must have unique ids across AllSchedulesData 
-        // not just within a singe schedule! I;m not absolutely sure why this is the criteria used to determine update necessity
-        // and why the item is not updated for having changed even if the id is the same - but it seems to be a thing
-        // about the way React handles lists of Component items and the need for those unique keys for each item in those lists of items.
-        // A database unique PK will suffice. Alternatively, we could just use 100*<schedulePK> + incremented shiftnum
-        const shifts2: Map<string, ShiftDataType> = new Map<string, ShiftDataType>();
-        shifts2.set("101", { id: "101", start: 7, duration: 9, daysOfWeek: [true,true,true,true,true,true,true,], providerType: "PHYS" });
-        shifts2.set("102", { id: "102", start: 15, duration: 9, daysOfWeek: [true,true,true,true,true,true,true,], providerType: "PHYS" });
-        shifts2.set("103", { id: "103", start: 11, duration: 9, daysOfWeek: [true,true,true,true,true,true,true,], providerType: "PHYS" });
-        shifts2.set("104", { id: "104", start: 23, duration: 9, daysOfWeek: [true,true,true,true,true,true,true,], providerType: "PHYS" });
-        shifts2.set("105", { id: "105", start: 8, duration: 12, daysOfWeek: [true,true,true,true,true,true,false], providerType: "APP" });
-        shifts2.set("106", { id: "106", start: 10, duration: 12, daysOfWeek: [true,true,true, false, true,true,true,], providerType: "APP" });
-        shifts2.set("107", { id: "107", start: 10, duration: 11, daysOfWeek: [true,true,true, false, true,true,true,], providerType: "APP" });
-
-        const pk2 = "2";
-        const schedule_name2: string = "Bobs Second Schedule Design";
-        const sched2: ScheduleDataType = { pk: pk2, owner: owner, schedule_name: schedule_name2, creationDate: new Date(2023, 5, 2), updateDate: new Date(2023, 5, 22), shifts: shifts2, yearly_cost: 12.2 }
-
-        this.schedules.set(pk2, sched2);
-
+        const schedules: Map<string, ScheduleDataType> = new Map<string, ScheduleDataType>();     
+        
+        schedulesData[0].forEach(r => {
+            if ( !schedules.has(r.schedule_id)) {
+                const sched: ScheduleDataType = {
+                    pk: r.schedule_id,
+                    owner: r.owner,
+                    schedule_name: r.schedule_name,
+                    creationDate: r.creation_date,
+                    updateDate: r.update_date,
+                    shifts: new Map<string,ShiftDataType>(),
+                    yearly_cost: 0.0,
+                };
+                schedules.set(r.schedule_id, sched);
+            }
+            schedules.get(r.schedule_id)?.shifts.set(r.shift_id, 
+                {
+                    id: r.shift_id,
+                    start: r.start_hour,
+                    duration: r.duration,
+                    deleteFlag: false,
+                    daysOfWeek: r.days_of_week,
+                    providerType: r.provider_type,
+                });
+        });
+        
+        setStateCallback(schedules);
     }
 
-    public getEmptySchedule(): ScheduleDataType {
-        return this.empty_schedule;
-    }
-
-    public getAllSchedulesData(): Map<string, ScheduleDataType> {
-        return this.schedules;
-    }
-
-    public getScheduleByNameAndOwner(pk: string): ScheduleDataType | undefined {
-        return this.schedules.get(pk);
+    public getEmptySchedule(): Map<string, ScheduleDataType> {
+        const pk0: string = "1";
+        const owner0: string = "null";
+        const schedule_name0: string = "null";
+        const empty_schedules: Map<string, ScheduleDataType> = new Map<string, ScheduleDataType>();
+        const empty_schedule: ScheduleDataType = {pk: pk0, owner: owner0, schedule_name: schedule_name0, creationDate: new Date(), updateDate: new Date(), shifts: new Map<string, ShiftDataType>(), yearly_cost: 0.0 };
+        empty_schedules.set(pk0, empty_schedule);
+        return empty_schedules;
     }
 }
 

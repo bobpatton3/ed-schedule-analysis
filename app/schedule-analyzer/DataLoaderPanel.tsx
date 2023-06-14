@@ -10,7 +10,7 @@ import CurrentScheduleAndCoverageData, { StatusHeaderDataType } from "./CurrentS
 const DataLoaderPanel = (
     { arrivals_update_callback, retrieve_all_schedules_callback }:
         {
-            arrivals_update_callback: (arrivals_data: ArrivalsDataType, status_header_data: StatusHeaderDataType,) => void,
+            arrivals_update_callback: (status_header_data: StatusHeaderDataType,) => void,
             retrieve_all_schedules_callback: (group: string, facility: string, department: string) => void,
         }
 ) => {
@@ -82,6 +82,10 @@ const DataLoaderPanel = (
         const dates: { start: Date, end: Date } = departments.get(e.target.value)!;
         setChosenDepartment(e.target.value);
         setEarliestStartDate(dates.start);
+
+        // Needs to be a Sunday!
+        dates.end.setDate(dates.end.getDate() - dates.end.getDay());
+
         setLatestEndDate(dates.end);
         setDefaultDepartmentSelectOptionDisabled(true);
         setStartDatePickerDisabled(false);
@@ -101,22 +105,21 @@ const DataLoaderPanel = (
         // TODO: chosen Dates below are not accurate when using the 3, 6, and 12 month buttons
         const presetsStartDate: Date = subtractDays(latestEndDate, e.target.value as number);
 
+        // TODO: door_to_provider hard-coded for now
+
         const status_header_data: StatusHeaderDataType = {
+            group_name: chosenGroup,
             facility_name: chosenFacility,
             department_name: chosenDepartment,
             data_start_date: presetsStartDate,
             data_end_date: latestEndDate,
-            schedule_name: ""
+            schedule_name: "",
+            door_to_provider: "30 minutes"
         };
-        //const allSchedulesData: AllSchedulesData = new AllSchedulesData();
+
         retrieve_all_schedules_callback(chosenGroup, chosenFacility, chosenDepartment);
 
-        if (e.target.value == 182) {
-            const ad: ArrivalsDataType = arrData.getDefaultArrivalsData();
-            arrivals_update_callback(ad, status_header_data);
-        } else {
-            arrivals_update_callback(arrData.getArrivalsData(), status_header_data);
-        }
+        arrivals_update_callback(status_header_data);
 
     }
 

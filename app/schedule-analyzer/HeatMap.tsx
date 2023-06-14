@@ -118,14 +118,16 @@ function HeatMap(
             <div className="heatMapTitleDiv" >Week-At-A-Glance</div>
             <div className="heatMapDivLeft" >
                 <table>
-                    <tr> <td className="heatMapDayLabels">Sun</td></tr>
-                    <tr> <td className="heatMapDayLabels">Mon</td></tr>
-                    <tr> <td className="heatMapDayLabels">Tue</td></tr>
-                    <tr> <td className="heatMapDayLabels">Wed</td></tr>
-                    <tr> <td className="heatMapDayLabels">Thu</td></tr>
-                    <tr> <td className="heatMapDayLabels">Fri</td></tr>
-                    <tr> <td className="heatMapDayLabels">Sat</td></tr>
-                    <tr> <td className="heatMapDayLabels">Sun</td></tr>
+                    <tbody>
+                        <tr> <td className="heatMapDayLabels">Sun</td></tr>
+                        <tr> <td className="heatMapDayLabels">Mon</td></tr>
+                        <tr> <td className="heatMapDayLabels">Tue</td></tr>
+                        <tr> <td className="heatMapDayLabels">Wed</td></tr>
+                        <tr> <td className="heatMapDayLabels">Thu</td></tr>
+                        <tr> <td className="heatMapDayLabels">Fri</td></tr>
+                        <tr> <td className="heatMapDayLabels">Sat</td></tr>
+                        <tr> <td className="heatMapDayLabels">Sun</td></tr>
+                    </tbody>
                 </table>
             </div>
             <div className="heatMapDivRight" >
@@ -136,17 +138,19 @@ function HeatMap(
                     </tbody>
                 </table>
                 <table>
-                    <tr>
-                        <td className="heatMapHourLabels">&nbsp;0</td>
-                        <td className="heatMapHourLabels">&nbsp;3</td>
-                        <td className="heatMapHourLabels">&nbsp;6</td>
-                        <td className="heatMapHourLabels">&nbsp;9</td>
-                        <td className="heatMapHourLabels">12</td>
-                        <td className="heatMapHourLabels">15</td>
-                        <td className="heatMapHourLabels">18</td>
-                        <td className="heatMapHourLabels">21</td>
-                        <td className="heatMapHourLabels">24</td>
-                    </tr>
+                    <tbody>
+                        <tr>
+                            <td className="heatMapHourLabels">&nbsp;0</td>
+                            <td className="heatMapHourLabels">&nbsp;3</td>
+                            <td className="heatMapHourLabels">&nbsp;6</td>
+                            <td className="heatMapHourLabels">&nbsp;9</td>
+                            <td className="heatMapHourLabels">12</td>
+                            <td className="heatMapHourLabels">15</td>
+                            <td className="heatMapHourLabels">18</td>
+                            <td className="heatMapHourLabels">21</td>
+                            <td className="heatMapHourLabels">24</td>
+                        </tr>
+                    </tbody>
                 </table>
             </div>
             <div className="heatMapXAxisUnitDiv" >Hour of Day</div>

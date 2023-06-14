@@ -20,13 +20,17 @@ let usePrefix: boolean = false;
 
 export default function ScheduleAnalyzer() {
     const todaysDate: Date = new Date();
-    const [maxY, setMaxY] = useState<number>(30);
+    const [maxY, setMaxY] = useState<number>(1);
+    const [covMaxY, setCovMaxY] = useState<number>(1);
+    const [arrMaxY, setArrMaxY] = useState<number>(1);
     const [statusHeaderData, setStatusHeaderData] = useState<StatusHeaderDataType>({
+        group_name: "",
         facility_name: "",
         department_name: "",
         data_start_date: todaysDate,
         data_end_date: todaysDate,
         schedule_name: "",
+        door_to_provider: "",
     });
     const arrivalsDataManager: ArrivalsData = new ArrivalsData();
     const [arrivalsData, setArrivalsData] = useState<ArrivalsDataType>(
@@ -35,21 +39,29 @@ export default function ScheduleAnalyzer() {
     const allSchedulesDataManager: AllSchedulesData = new AllSchedulesData();
 
     const [allSchedulesData, setAllSchedulesData] = useState<Map<string, ScheduleDataType>>(
-        allSchedulesDataManager.getAllSchedulesData()
-    );
+        allSchedulesDataManager.getEmptySchedule());
 
     function retrieveAllScheduleData(group: string, facility: string, department: string): void {
-        allSchedulesDataManager.retrieveAllSchedulesData(group, facility, department);
+        allSchedulesDataManager.retrieveAllSchedulesData(group, facility, department, setAllSchedulesData);
     }
 
     const curr_sched_cov_data: CurrentScheduleAndCoverageData = new CurrentScheduleAndCoverageData();
     const [currCovData, setCurrCovData] = useState<CoverageDataType>(curr_sched_cov_data.getCoverageData());
     const [currSchedData, setCurrSchedData] = useState<ScheduleDataType>(curr_sched_cov_data.getCurrentSchedule());
 
-    function updateArrivalsData(arrivals_data: ArrivalsDataType,
-        status_header_data: StatusHeaderDataType) {
-        setArrivalsData(arrivals_data);
+    function updateArrivalsData(status_header_data: StatusHeaderDataType) {
+        arrivalsDataManager.getArrivalsData(status_header_data, setArrivalsData, updateArrMaxY);
         setStatusHeaderData(status_header_data);
+    }
+
+    function updateArrMaxY(retArrMaxY: number) {
+        setArrMaxY(retArrMaxY);
+        setMaxY((retArrMaxY < covMaxY) ? covMaxY : retArrMaxY);
+    }
+
+    function updateCovMaxY(retCovMaxY: number) {
+        setCovMaxY(retCovMaxY);
+        setMaxY((retCovMaxY < arrMaxY) ? arrMaxY : retCovMaxY);
     }
 
     function setNewSelectedSchedule(pk: string) {
@@ -62,10 +74,8 @@ export default function ScheduleAnalyzer() {
             curr_sched_cov_data.setCurrentSchedule(selectedSched);
             setCurrSchedData(selectedSched);
             setCurrCovData(curr_sched_cov_data.getCoverageData());
+            updateCovMaxY(curr_sched_cov_data.getMaxY());
 
-            const covMaxY = curr_sched_cov_data.getMaxY();
-            const arrMaxY = arrivalsDataManager.getMaxY();
-            setMaxY(covMaxY < arrMaxY ? arrMaxY : covMaxY);
             const newStatusHeaderData = { ...statusHeaderData, schedule_name: selectedSched.schedule_name };
             setStatusHeaderData(newStatusHeaderData);
             usePrefix = !usePrefix;
@@ -73,21 +83,24 @@ export default function ScheduleAnalyzer() {
     }
 
     function updateSchedAndCovWhenShiftModified(shift_data: ShiftDataType) {
-        // TODO - implement!
-        Object.entries(shift_data).forEach((v, k) => console.log(`${v[0]} = ${v[1]}`));
+
         let newSchedData: ScheduleDataType = { ...currSchedData };
-        Object.entries(newSchedData).forEach((v, k) => console.log(`${v[0]} = ${v[1]}`));
-        Object.entries(newSchedData.shifts).forEach((v, k) => console.log(`${v[0]} = ${v[1].id},  ${v[1].duration},  ${v[1].providerType}`));
+
+        //Object.entries(shift_data).forEach((v, k) => console.log(`${v[0]} = ${v[1]}`));
+        //Object.entries(newSchedData).forEach((v, k) => console.log(`${v[0]} = ${v[1]}`));
+        //Object.entries(newSchedData.shifts).forEach((v, k) => console.log(`${v[0]} = ${v[1].id},  ${v[1].duration},  ${v[1].providerType}`));
 
         let newShifts: Map<string, ShiftDataType> = new Map<string, ShiftDataType>(newSchedData.shifts);
         newShifts.set(shift_data.id, shift_data);
         newSchedData.shifts = newShifts;
         setCurrSchedData(newSchedData);
+
         // Some of these below seem redundant but this statemanagement thing is a bit tricky
         // I could change getCoverageData to be a utility function that you pass the schedule in to which would 
         // preclude needing to maintain any state within curr_sched_cov_data
         curr_sched_cov_data.setCurrentSchedule(newSchedData);
         setCurrCovData(curr_sched_cov_data.getCoverageData());
+        updateCovMaxY(curr_sched_cov_data.getMaxY());
     }
 
     function addShift(provType: string) {
@@ -96,7 +109,6 @@ export default function ScheduleAnalyzer() {
         idval += 1;
         const newShift: ShiftDataType = { id: idval.toString(), start: 8, duration: 8, deleteFlag: false, daysOfWeek: [true, true, true, true, true, true, true,], providerType: provType };
 
-        console.log("newShift added with idval = " + idval);
         updateSchedAndCovWhenShiftModified(newShift);
     }
 
@@ -194,7 +206,7 @@ export default function ScheduleAnalyzer() {
                                 <ArrivalsDataSlice dept_arrivals_data={arrivalsData.Full} dept_coverage_data={currCovData.Full} maxY={maxY} />
                             </Tab>
                             <Tab eventKey="phys_only" title="PhysOnly (CClvl5)">
-                                <ArrivalsDataSlice dept_arrivals_data={arrivalsData.lvl5CC} dept_coverage_data={currCovData.lvl5CC} maxY={maxY} />
+                                <ArrivalsDataSlice dept_arrivals_data={arrivalsData.l5CC} dept_coverage_data={currCovData.l5CC} maxY={maxY} />
                             </Tab>
                         </Tabs>
                     </div>
