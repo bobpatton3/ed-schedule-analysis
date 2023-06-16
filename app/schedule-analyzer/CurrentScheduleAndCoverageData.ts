@@ -29,12 +29,12 @@ export type StatusHeaderDataType = {
 export default class CurrentScheduleAndCoverageData {
 
     private coverage_data: CoverageDataType;
-    private current_schedule: ScheduleDataType = { pk: "", owner: "", schedule_name: "", creationDate: new Date(), updateDate: new Date(), shifts: new Map<string, ShiftDataType>(), yearly_cost: 0 };
+    private current_schedule: ScheduleDataType = { pk: "", owner: "", schedule_name: "", creationDate: new Date(), updateDate: new Date(), client_group: "", facility: "", department: "", shifts: new Map<string, ShiftDataType>(), yearly_cost: 0 };
     private y_max: number;
     private phys_peak_capacity = 12.0;
     private app_peak_capacity = 8.0;
-    private phys_profile = [1.5, 1.2, 1.1, 1.0, 0.9, 0.8, 0.5 ];
-    private app_profile = [1.3, 1.1, 1.0, 1.0, 1.0, 1.0, 0.6 ];
+    private phys_profile = [1.5, 1.2, 1.1, 1.0, 0.9, 0.8, 0.5];
+    private app_profile = [1.3, 1.1, 1.0, 1.0, 1.0, 1.0, 0.6];
 
     constructor() {
         this.coverage_data = {
@@ -79,7 +79,7 @@ export default class CurrentScheduleAndCoverageData {
     public getCoverageData(): CoverageDataType {
         return this.coverage_data;
     }
-    
+
     public getMaxY(): number {
         this.calculateMaxY();
         return this.y_max;
@@ -99,18 +99,18 @@ export default class CurrentScheduleAndCoverageData {
     private calculateCoverageData() {
         const eightDaysArrayFull = new Array(192).fill(0);
         const eightDaysArrayl5CC = new Array(192).fill(0);
-        
+
         this.current_schedule.shifts.forEach((value, key) => {
 
             const profile = new Array(value.duration).fill((value.providerType == "PHYS" ? this.phys_peak_capacity : this.app_peak_capacity));
 
             for (let i = 0; i < 3; i++) {
-                profile[i] = profile[i] * (value.providerType == "PHYS" ? this.phys_profile[i]: this.app_profile[i]);
+                profile[i] = profile[i] * (value.providerType == "PHYS" ? this.phys_profile[i] : this.app_profile[i]);
                 // k counts back from the end of the shift
                 let k = value.duration - 1 - i;
-                profile[k] = profile[k] * (value.providerType == "PHYS" ? this.phys_profile[6-i]: this.app_profile[6-i]);
+                profile[k] = profile[k] * (value.providerType == "PHYS" ? this.phys_profile[6 - i] : this.app_profile[6 - i]);
             }
-            
+
             if (!value.deleteFlag) {
                 for (let i = 0; i < 7; i++) {
                     if (value.daysOfWeek[i]) {
@@ -124,22 +124,22 @@ export default class CurrentScheduleAndCoverageData {
             }
 
         });
-        
-        for ( let hod = 0; hod < 25; hod++) {
+
+        for (let hod = 0; hod < 25; hod++) {
             this.coverage_data.Full.AVG[hod] = 0.0;
             this.coverage_data.l5CC.AVG[hod] = 0.0;
         }
 
-        for ( let day = 0; day < 7; day++) {
-            for ( let hod = 0; hod < 25; hod++) {
-                this.coverage_data.Full[this.bitToDay[day]][hod] = eightDaysArrayFull[day*24 + hod];
-                this.coverage_data.Full.AVG[hod] += eightDaysArrayFull[day*24 + hod] / 7.0;
-                this.coverage_data.l5CC[this.bitToDay[day]][hod] = eightDaysArrayl5CC[day*24 + hod];
-                this.coverage_data.l5CC.AVG[hod] += eightDaysArrayl5CC[day*24 + hod] / 7.0;
+        for (let day = 0; day < 7; day++) {
+            for (let hod = 0; hod < 25; hod++) {
+                this.coverage_data.Full[this.bitToDay[day]][hod] = eightDaysArrayFull[day * 24 + hod];
+                this.coverage_data.Full.AVG[hod] += eightDaysArrayFull[day * 24 + hod] / 7.0;
+                this.coverage_data.l5CC[this.bitToDay[day]][hod] = eightDaysArrayl5CC[day * 24 + hod];
+                this.coverage_data.l5CC.AVG[hod] += eightDaysArrayl5CC[day * 24 + hod] / 7.0;
             }
         }
         // handle the end of the week wrap around to the next Sunday (hence why the eightDaysArrays are of length 8*24 = 192 instead of 7*24=168):
-        for ( let hod = 0; hod < 24; hod++) {
+        for (let hod = 0; hod < 24; hod++) {
             this.coverage_data.Full.SUN[hod] += eightDaysArrayFull[168 + hod];
             this.coverage_data.Full.AVG[hod] += eightDaysArrayFull[168 + hod] / 7.0;
             this.coverage_data.l5CC.SUN[hod] += eightDaysArrayl5CC[168 + hod];

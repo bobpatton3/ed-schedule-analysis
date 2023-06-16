@@ -13,6 +13,7 @@ import SchedulesPanel from "./SchedulesPanel";
 import ArrivalsDataSlice from "./ArrivalsDataSlice";
 import ShiftSliderComponent from "./ShiftSliderComponent";
 import { Box } from "@mui/material";
+import SaveScheduleModal from "./SaveScheduleModal";
 
 // toggling the use of a prefix on the ShiftSliderComponent's key ensures the Designer tab
 // gets refreshed by clicking on the same schedule again in the SchedulesPanel (its a React issue!)
@@ -20,6 +21,7 @@ let usePrefix: boolean = false;
 
 export default function ScheduleAnalyzer() {
     const todaysDate: Date = new Date();
+    const [modalOpen, setModalOpen] = useState<boolean>(false);
     const [maxY, setMaxY] = useState<number>(1);
     const [covMaxY, setCovMaxY] = useState<number>(1);
     const [arrMaxY, setArrMaxY] = useState<number>(1);
@@ -43,6 +45,20 @@ export default function ScheduleAnalyzer() {
 
     function retrieveAllScheduleData(group: string, facility: string, department: string): void {
         allSchedulesDataManager.retrieveAllSchedulesData(group, facility, department, setAllSchedulesData);
+
+        // TODO: hard-coded my username
+        setCurrSchedData({
+            pk: "temp",
+            owner: "bpatton",
+            schedule_name: "NEW SCHED",
+            creationDate: new Date(),
+            updateDate: new Date(),
+            client_group: group,
+            facility: facility,
+            department: department,
+            yearly_cost: 0.0,
+            shifts: new Map<string, ShiftDataType>(),
+        });
     }
 
     const curr_sched_cov_data: CurrentScheduleAndCoverageData = new CurrentScheduleAndCoverageData();
@@ -86,9 +102,9 @@ export default function ScheduleAnalyzer() {
 
         let newSchedData: ScheduleDataType = { ...currSchedData };
 
-        //Object.entries(shift_data).forEach((v, k) => console.log(`${v[0]} = ${v[1]}`));
-        //Object.entries(newSchedData).forEach((v, k) => console.log(`${v[0]} = ${v[1]}`));
-        //Object.entries(newSchedData.shifts).forEach((v, k) => console.log(`${v[0]} = ${v[1].id},  ${v[1].duration},  ${v[1].providerType}`));
+        // Object.entries(shift_data).forEach((v, k) => console.log(`${v[0]} = ${v[1]}`));
+        // Object.entries(newSchedData).forEach((v, k) => console.log(`${v[0]} = ${v[1]}`));
+        // Object.entries(newSchedData.shifts).forEach((v, k) => console.log(`${v[0]} = ${v[1].id},  ${v[1].duration},  ${v[1].providerType}`));
 
         let newShifts: Map<string, ShiftDataType> = new Map<string, ShiftDataType>(newSchedData.shifts);
         newShifts.set(shift_data.id, shift_data);
@@ -101,6 +117,7 @@ export default function ScheduleAnalyzer() {
         curr_sched_cov_data.setCurrentSchedule(newSchedData);
         setCurrCovData(curr_sched_cov_data.getCoverageData());
         updateCovMaxY(curr_sched_cov_data.getMaxY());
+
     }
 
     function addShift(provType: string) {
@@ -120,6 +137,9 @@ export default function ScheduleAnalyzer() {
             schedule_name: "NEW SCHED",
             creationDate: new Date(),
             updateDate: new Date(),
+            client_group: statusHeaderData.group_name,
+            facility: statusHeaderData.facility_name,
+            department: statusHeaderData.department_name,
             yearly_cost: 0.0,
             shifts: new Map<string, ShiftDataType>(),
         };
@@ -129,15 +149,35 @@ export default function ScheduleAnalyzer() {
         // preclude needing to maintain any state within curr_sched_cov_data
         curr_sched_cov_data.setCurrentSchedule(newSchedule);
         setCurrCovData(curr_sched_cov_data.getCoverageData());
+        setStatusHeaderData({ ...statusHeaderData, schedule_name: "" })
     }
 
     function saveScheduleChanges() {
-        console.log("TODO: save schedule changes coming");
+        setModalOpen(true);
+    }
+
+    function handleModalClose(save_sched: boolean = false, sched_name?: string) {
+        setModalOpen(false);
+
+        if (save_sched && sched_name) {
+            if (sched_name === statusHeaderData.schedule_name && currSchedData === allSchedulesData.get(currSchedData.pk)) {
+                // need dialog for this:
+                console.log("There are no changes to process.");
+                return;
+            }
+            if (sched_name != statusHeaderData.schedule_name) {
+                setStatusHeaderData({ ...statusHeaderData, schedule_name: sched_name });
+                const newSchedData: ScheduleDataType = { ...currSchedData, schedule_name: sched_name };
+                setCurrSchedData(newSchedData);
+                allSchedulesDataManager.saveSchedule(newSchedData, setAllSchedulesData, setCurrSchedData);
+            } else {
+                allSchedulesDataManager.saveSchedule(currSchedData, setAllSchedulesData, setCurrSchedData);
+            }
+        }
     }
 
     /* TODOs:
-        1. Damn! I think we are ready to start on the server-side!
-        2. Deal with the whole Date conversion and UTC time problem (Not a  big issue at the moment. Delay until after the server-side is done.)
+        1. 
     */
 
     const currentScheduleShiftsArray: ShiftDataType[] = Array.from(currSchedData.shifts.values());
@@ -172,6 +212,7 @@ export default function ScheduleAnalyzer() {
                                 <SchedulesPanel select_schedule_callback={setNewSelectedSchedule} all_schedules_data={allSchedulesData} />
                             </Tab>
                             <Tab eventKey="schedule_design" title="Designer">
+                                <SaveScheduleModal modal_state={modalOpen} handle_modal_close_callback={handleModalClose} current_schedule_name={statusHeaderData.schedule_name} />
                                 <div className="scroll">
                                     <div className="tabPanelDiv">
                                         <div className="providerTypeDivs">Physician shifts:
