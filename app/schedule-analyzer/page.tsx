@@ -7,16 +7,16 @@ import CurrentScheduleAndCoverageData, {
     StatusHeaderDataType,
 } from "./CurrentScheduleAndCoverageData";
 import AllSchedulesData, { ScheduleDataType, ShiftDataType } from "./AllSchedulesData";
-import { Button, Container, Tab, Tabs } from "react-bootstrap";
+import { Button, Tab, Tabs } from "react-bootstrap";
 import DataLoaderPanel from "./DataLoaderPanel";
 import SchedulesPanel from "./SchedulesPanel";
 import ArrivalsDataSlice from "./ArrivalsDataSlice";
 import ShiftSliderComponent from "./ShiftSliderComponent";
-import { Box } from "@mui/material";
 import SaveScheduleModal from "./SaveScheduleModal";
 
 // toggling the use of a prefix on the ShiftSliderComponent's key ensures the Designer tab
-// gets refreshed by clicking on the same schedule again in the SchedulesPanel (its a React issue!)
+// gets refreshed back to its previously saved state by clicking on the same schedule again in
+// the SchedulesPanel (its a React issue since useState is on the reference which doesn't change)
 let usePrefix: boolean = false;
 
 export default function ScheduleAnalyzer() {
@@ -43,22 +43,24 @@ export default function ScheduleAnalyzer() {
     const [allSchedulesData, setAllSchedulesData] = useState<Map<string, ScheduleDataType>>(
         allSchedulesDataManager.getEmptySchedule());
 
+    // TODO: hard-coded my username
+    const emptySchedule: ScheduleDataType = {
+        pk: "temp",
+        owner: "bpatton",
+        schedule_name: "NEW SCHED",
+        creationDate: new Date(),
+        updateDate: new Date(),
+        client_group: statusHeaderData.group_name,
+        facility: statusHeaderData.facility_name,
+        department: statusHeaderData.department_name,
+        yearly_cost: 0.0,
+        shifts: new Map<string, ShiftDataType>(),
+    };
+
     function retrieveAllScheduleData(group: string, facility: string, department: string): void {
         allSchedulesDataManager.retrieveAllSchedulesData(group, facility, department, setAllSchedulesData);
 
-        // TODO: hard-coded my username
-        setCurrSchedData({
-            pk: "temp",
-            owner: "bpatton",
-            schedule_name: "NEW SCHED",
-            creationDate: new Date(),
-            updateDate: new Date(),
-            client_group: group,
-            facility: facility,
-            department: department,
-            yearly_cost: 0.0,
-            shifts: new Map<string, ShiftDataType>(),
-        });
+        setCurrSchedData(emptySchedule);
     }
 
     const curr_sched_cov_data: CurrentScheduleAndCoverageData = new CurrentScheduleAndCoverageData();
@@ -111,9 +113,6 @@ export default function ScheduleAnalyzer() {
         newSchedData.shifts = newShifts;
         setCurrSchedData(newSchedData);
 
-        // Some of these below seem redundant but this statemanagement thing is a bit tricky
-        // I could change getCoverageData to be a utility function that you pass the schedule in to which would 
-        // preclude needing to maintain any state within curr_sched_cov_data
         curr_sched_cov_data.setCurrentSchedule(newSchedData);
         setCurrCovData(curr_sched_cov_data.getCoverageData());
         updateCovMaxY(curr_sched_cov_data.getMaxY());
@@ -130,24 +129,8 @@ export default function ScheduleAnalyzer() {
     }
 
     function clearForNewDesign() {
-        // TODO: hard-coded my username
-        let newSchedule: ScheduleDataType = {
-            pk: "temp",
-            owner: "bpatton",
-            schedule_name: "NEW SCHED",
-            creationDate: new Date(),
-            updateDate: new Date(),
-            client_group: statusHeaderData.group_name,
-            facility: statusHeaderData.facility_name,
-            department: statusHeaderData.department_name,
-            yearly_cost: 0.0,
-            shifts: new Map<string, ShiftDataType>(),
-        };
-        setCurrSchedData(newSchedule);
-        // Some of these below seem redundant but this statemanagement thing is a bit tricky
-        // I could change getCoverageData to be a utility function that you pass the schedule in to which would 
-        // preclude needing to maintain any state within curr_sched_cov_data
-        curr_sched_cov_data.setCurrentSchedule(newSchedule);
+        setCurrSchedData(emptySchedule);
+        curr_sched_cov_data.setCurrentSchedule(emptySchedule);
         setCurrCovData(curr_sched_cov_data.getCoverageData());
         setStatusHeaderData({ ...statusHeaderData, schedule_name: "" })
     }
@@ -174,6 +157,18 @@ export default function ScheduleAnalyzer() {
                 allSchedulesDataManager.saveSchedule(currSchedData, setAllSchedulesData, setCurrSchedData);
             }
         }
+    }
+
+    function deleteSchedule(pk: string) {
+        allSchedulesDataManager.deleteSchedule(pk, deleteScheduleSuccessfulCallback);
+    }
+
+    function deleteScheduleSuccessfulCallback(pk: string) {
+        const newAllSchedules = new Map<string, ScheduleDataType>();
+        allSchedulesData.forEach((sched, key) => {
+            if (key !== pk) newAllSchedules.set(key, sched);
+        });
+        setAllSchedulesData(newAllSchedules);
     }
 
     /* TODOs:
@@ -209,7 +204,7 @@ export default function ScheduleAnalyzer() {
                                 <DataLoaderPanel arrivals_update_callback={updateArrivalsData} retrieve_all_schedules_callback={retrieveAllScheduleData} />
                             </Tab>
                             <Tab eventKey="existing_schedules" title="Schedules">
-                                <SchedulesPanel select_schedule_callback={setNewSelectedSchedule} all_schedules_data={allSchedulesData} />
+                                <SchedulesPanel select_schedule_callback={setNewSelectedSchedule} delete_schedule_callback={deleteSchedule} all_schedules_data={allSchedulesData} />
                             </Tab>
                             <Tab eventKey="schedule_design" title="Designer">
                                 <SaveScheduleModal modal_state={modalOpen} handle_modal_close_callback={handleModalClose} current_schedule_name={statusHeaderData.schedule_name} />

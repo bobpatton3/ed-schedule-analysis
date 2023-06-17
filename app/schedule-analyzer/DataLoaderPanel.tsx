@@ -4,7 +4,7 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { useState } from "react";
 import { Button, FloatingLabel, Form } from "react-bootstrap";
 import PostLoginData from "./PostLoginData";
-import ArrivalsData, { ArrivalsDataType } from "./ArrivalsData";
+import ArrivalsData from "./ArrivalsData";
 import CurrentScheduleAndCoverageData, { StatusHeaderDataType } from "./CurrentScheduleAndCoverageData";
 
 const DataLoaderPanel = (

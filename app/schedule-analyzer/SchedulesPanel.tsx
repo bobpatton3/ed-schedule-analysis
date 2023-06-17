@@ -3,24 +3,43 @@
 import { Button } from "react-bootstrap";
 import { ScheduleDataType } from "./AllSchedulesData";
 import { DataGrid, GridColDef, GridRowId } from "@mui/x-data-grid";
+import { useState } from "react";
+import DeleteScheduleConfirmationModal from "./DeleteScheduleConfirmationModal";
+
+type PkModalStatePair = {
+    pk: string;
+    modal_state: boolean;
+};
 
 function SchedulesPanel(
     {
         select_schedule_callback,
+        delete_schedule_callback,
         all_schedules_data,
     }: {
         select_schedule_callback: (pk: string) => void;
+        delete_schedule_callback: (pk: string) => void;
         all_schedules_data: Map<string, ScheduleDataType>;
     }
 ) {
+    const [pkModalStatePair, setPkModalStatePair] = useState<PkModalStatePair>({ pk: "", modal_state: false });
 
     const onClickScheduleNameButton = (id: GridRowId): void => {
         select_schedule_callback(id.toString());
     };
 
     const onClickDeleteScheduleButton = (id: GridRowId): void => {
-        console.log('delete schedule functionality coming soon!');
+        setPkModalStatePair({ pk: id.toString(), modal_state: true });
     };
+
+    const handleDeleteConfirmationClose = (delete_sched: boolean = false, pk?: string) => {
+
+        if (delete_sched && pk) {
+            delete_schedule_callback(pk);
+        }
+
+        setPkModalStatePair({ pk: "", modal_state: false });
+    }
 
     const rows: object[] = [];
     all_schedules_data.forEach((value: ScheduleDataType, key: string) => {
@@ -85,6 +104,11 @@ function SchedulesPanel(
                 rows={rows}
                 columns={columns}
                 hideFooter={true} />
+            <DeleteScheduleConfirmationModal
+                handle_modal_close_callback={handleDeleteConfirmationClose}
+                all_schedules_data={all_schedules_data}
+                pk_modal_state_pair={pkModalStatePair}
+            />
         </div>
     );
 }

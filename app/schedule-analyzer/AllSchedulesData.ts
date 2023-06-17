@@ -119,6 +119,24 @@ export default class AllSchedulesData {
         return empty_schedules;
     }
 
+    public async deleteSchedule(pk: string, deleteScheduleSuccessfulCallback: (pk: string) => void) {
+        try {
+            const response = await fetch("http://localhost:8080/schedules/" + pk, {
+                method: "DELETE",
+            });
+
+            if (response.status >= 400) {
+                console.log("server returns error: response >= 400");
+                return;
+            }
+
+            deleteScheduleSuccessfulCallback(pk);
+
+        } catch (error) {
+            console.log("Exception saving Schedule: " + error);
+        }
+    }
+
     public async saveSchedule(
         schedule: ScheduleDataType,
         setAllSchedulesData: Dispatch<SetStateAction<Map<string, ScheduleDataType>>>,
@@ -154,7 +172,7 @@ export default class AllSchedulesData {
             );
 
         } catch (error) {
-            console.log("try block threw exception: " + error);
+            console.log("Exception saving Schedule: " + error);
         }
     }
 
