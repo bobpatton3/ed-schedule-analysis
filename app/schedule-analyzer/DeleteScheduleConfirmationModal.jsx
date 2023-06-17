@@ -40,7 +40,8 @@ const DeleteScheduleConfirmationModal = ({
       <Form onSubmit={handleFormSubmitWithEnter}>
         <Form.Group className="saveScheduleFormGroup">
           <Form.Label>
-            Delete the Schedule Named {local_schedule_name}?
+            Delete this schedule?
+            <br />"{local_schedule_name}"
           </Form.Label>
         </Form.Group>
         <Form.Group>

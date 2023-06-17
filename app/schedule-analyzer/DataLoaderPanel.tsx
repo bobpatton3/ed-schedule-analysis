@@ -94,40 +94,37 @@ const DataLoaderPanel = (
     };
 
     function onClickLoadButton(e: any) {
-        // TODO
+        retrieveArrivalsAndSchedules(chosenStartDate, chosenEndDate);
     }
 
     function onClickFixedMonthsLoadButton(e: any) {
-        // TODO: The below is just for testing. Need the real code here that will ultimately lead to the API calls.
-        const arrData: ArrivalsData = new ArrivalsData();
-        const covData: CurrentScheduleAndCoverageData = new CurrentScheduleAndCoverageData();
-
-        // TODO: chosen Dates below are not accurate when using the 3, 6, and 12 month buttons
         const presetsStartDate: Date = subtractDays(latestEndDate, e.target.value as number);
 
-        // TODO: door_to_provider hard-coded for now
+        retrieveArrivalsAndSchedules(presetsStartDate, latestEndDate);
+    }
+
+    function subtractDays(date: Date, days: number): Date {
+        const result: Date = new Date(date);
+        result.setDate(result.getDate() - days);
+        return result;
+    }
+
+    function retrieveArrivalsAndSchedules(startDate: Date, endDate: Date) {
 
         const status_header_data: StatusHeaderDataType = {
             group_name: chosenGroup,
             facility_name: chosenFacility,
             department_name: chosenDepartment,
-            data_start_date: presetsStartDate,
-            data_end_date: latestEndDate,
+            data_start_date: startDate,
+            data_end_date: endDate,
             schedule_name: "",
-            door_to_provider: "30 minutes"
+            door_to_provider: "30 minutes"    // TODO: door_to_provider hard-coded for now
         };
 
         retrieve_all_schedules_callback(chosenGroup, chosenFacility, chosenDepartment);
-
         arrivals_update_callback(status_header_data);
-
     }
 
-    function subtractDays(date: Date, days: number) {
-        const result = new Date(date);
-        result.setDate(result.getDate() - days);
-        return result;
-    }
 
     return (
         <div className="tabPanelDiv">
