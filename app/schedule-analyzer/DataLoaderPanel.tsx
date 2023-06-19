@@ -3,37 +3,48 @@ import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { useState } from "react";
 import { Button, FloatingLabel, Form } from "react-bootstrap";
-import PostLoginData from "./PostLoginData";
+import PostLoginData, { DepartmentConfigurationType } from "./PostLoginData";
 import ArrivalsData from "./ArrivalsData";
 import CurrentScheduleAndCoverageData, { StatusHeaderDataType } from "./CurrentScheduleAndCoverageData";
+import { UUID, randomUUID } from "crypto";
 
 const DataLoaderPanel = (
-    { arrivals_update_callback, retrieve_all_schedules_callback }:
+    { user_id, arrivals_update_callback, retrieve_all_schedules_callback }:
         {
+            user_id: UUID,
             arrivals_update_callback: (status_header_data: StatusHeaderDataType,) => void,
-            retrieve_all_schedules_callback: (group: string, facility: string, department: string) => void,
+            retrieve_all_schedules_callback: (department_id: UUID) => void,
         }
 ) => {
     const [startDatePickerDisabled, setStartDatePickerDisabled] = useState(true);
     const [endDatePickerDisabled, setEndDatePickerDisabled] = useState(true);
     const [loadButtonDisabled, setLoadButtonDisabled] = useState(true);
     const [loadFixedMonthsDisabled, setLoadFixedMonthsDisabled] = useState(true);
-    const [facilities, setFacilities] = useState<Map<string, Map<string, { start: Date, end: Date }>>>(new Map<string, Map<string, { start: Date, end: Date }>>());
-    const [departments, setDepartments] = useState<Map<string, { start: Date, end: Date }>>(new Map<string, { start: Date, end: Date }>());
+    const [facilities, setFacilities] = useState<Map<string, Map<string, DepartmentConfigurationType>>>(new Map<string, Map<string, DepartmentConfigurationType>>());
+    const [departments, setDepartments] = useState<Map<string, DepartmentConfigurationType>>(new Map<string, DepartmentConfigurationType>());
     const [earliestStartDate, setEarliestStartDate] = useState<Date>(new Date());
     const [earliestEndDate, setEarliestEndDate] = useState<Date>(new Date());
     const [latestEndDate, setLatestEndDate] = useState<Date>(new Date());
     const [chosenGroup, setChosenGroup] = useState<string>("");
     const [chosenFacility, setChosenFacility] = useState<string>("");
-    const [chosenDepartment, setChosenDepartment] = useState<string>("");
+    const [chosenDepartment, setChosenDepartment] = useState<DepartmentConfigurationType>({
+        department_id: "00000000-0000-0000-0000-000000000000",
+        department_name: "",
+        data_start_date: new Date(),
+        data_end_date: new Date(),
+        phys_hourly_cost: 0,
+        phys_peak_capacity: 0,
+        app_hourly_cost: 0,
+        app_peak_capacity: 0,
+    });
     const [chosenStartDate, setChosenStartDate] = useState<Date>(new Date());
     const [chosenEndDate, setChosenEndDate] = useState<Date>(new Date());
     const [defaultGroupSelectOptionDisabled, setDefaultGroupSelectOptionDisabled] = useState(false);
     const [defaultFacilitySelectOptionDisabled, setDefaultFacilitySelectOptionDisabled] = useState(false);
     const [defaultDepartmentSelectOptionDisabled, setDefaultDepartmentSelectOptionDisabled] = useState(false);
+    const [postLoginData, setPostLoginData] = useState<Map<string, Map<string, Map<string, DepartmentConfigurationType>>>>(new Map<string, Map<string, Map<string, DepartmentConfigurationType>>>());
 
-    const dataAccessor: PostLoginData = new PostLoginData();
-    const postLoginData: Map<string, Map<string, Map<string, { start: Date, end: Date }>>> = dataAccessor.getPostLoginData();
+    PostLoginData.getPostLoginData(user_id, setPostLoginData);
 
     const dataStartDateChanged = (newStartDate: Date | null) => {
         if (newStartDate) {
@@ -55,21 +66,23 @@ const DataLoaderPanel = (
     };
 
     function onGroupSelect(e: any) {
-        const grp: Map<string, Map<string, { start: Date, end: Date }>> = postLoginData.get(e.target.value)!;
-        setChosenGroup(e.target.value);
-        setFacilities(grp);
-        setDepartments(new Map<string, { start: Date, end: Date }>());
-        setDefaultGroupSelectOptionDisabled(true);
-        setDefaultFacilitySelectOptionDisabled(false);
-        setDefaultDepartmentSelectOptionDisabled(false);
-        setStartDatePickerDisabled(true);
-        setLoadFixedMonthsDisabled(true);
-        setEndDatePickerDisabled(true);
-        setLoadButtonDisabled(true);
+        if (postLoginData) {
+            const grp: Map<string, Map<string, DepartmentConfigurationType>> = postLoginData.get(e.target.value)!;
+            setChosenGroup(e.target.value);
+            setFacilities(grp);
+            setDepartments(new Map<string, DepartmentConfigurationType>());
+            setDefaultGroupSelectOptionDisabled(true);
+            setDefaultFacilitySelectOptionDisabled(false);
+            setDefaultDepartmentSelectOptionDisabled(false);
+            setStartDatePickerDisabled(true);
+            setLoadFixedMonthsDisabled(true);
+            setEndDatePickerDisabled(true);
+            setLoadButtonDisabled(true);
+        }
     };
 
     function onFacilitySelect(e: any) {
-        const fac: Map<string, { start: Date, end: Date }> = facilities.get(e.target.value)!;
+        const fac: Map<string, DepartmentConfigurationType> = facilities.get(e.target.value)!;
         setChosenFacility(e.target.value);
         setDepartments(fac);
         setDefaultFacilitySelectOptionDisabled(true);
@@ -79,14 +92,14 @@ const DataLoaderPanel = (
     };
 
     function onDepartmentSelect(e: any) {
-        const dates: { start: Date, end: Date } = departments.get(e.target.value)!;
-        setChosenDepartment(e.target.value);
-        setEarliestStartDate(dates.start);
+        const deptConf: DepartmentConfigurationType = departments.get(e.target.value)!;
+        setChosenDepartment(deptConf);
+        setEarliestStartDate(deptConf.data_start_date);
 
         // Needs to be a Sunday!
-        dates.end.setDate(dates.end.getDate() - dates.end.getDay());
+        deptConf.data_end_date.setDate(deptConf.data_end_date.getDate() - deptConf.data_end_date.getDay());
 
-        setLatestEndDate(dates.end);
+        setLatestEndDate(deptConf.data_end_date);
         setDefaultDepartmentSelectOptionDisabled(true);
         setStartDatePickerDisabled(false);
         setLoadButtonDisabled(true);
@@ -114,14 +127,15 @@ const DataLoaderPanel = (
         const status_header_data: StatusHeaderDataType = {
             group_name: chosenGroup,
             facility_name: chosenFacility,
-            department_name: chosenDepartment,
+            department_name: chosenDepartment.department_name,
+            department_id: chosenDepartment.department_id,
             data_start_date: startDate,
             data_end_date: endDate,
             schedule_name: "",
             door_to_provider: "30 minutes"    // TODO: door_to_provider hard-coded for now
         };
 
-        retrieve_all_schedules_callback(chosenGroup, chosenFacility, chosenDepartment);
+        retrieve_all_schedules_callback(chosenDepartment.department_id);
         arrivals_update_callback(status_header_data);
     }
 
@@ -131,7 +145,7 @@ const DataLoaderPanel = (
             <FloatingLabel controlId="floatingSelect" label="Group:" className="dataLoaderLabel">
                 <Form.Select onChange={onGroupSelect} >
                     <option disabled={defaultGroupSelectOptionDisabled}>Choose your desired group</option>
-                    {Array.from(postLoginData.keys()).map((k: string) => { return <option value={k} key={k}>{k}</option>; })}
+                    {Array.from(postLoginData?.keys()).map((k: string) => { return <option value={k} key={k}>{k}</option>; })}
                 </Form.Select>
             </FloatingLabel>
             <FloatingLabel controlId="floatingSelect" label="Facility:" className="dataLoaderLabel">

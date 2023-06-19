@@ -13,6 +13,7 @@ import SchedulesPanel from "./SchedulesPanel";
 import ArrivalsDataSlice from "./ArrivalsDataSlice";
 import ShiftSliderComponent from "./ShiftSliderComponent";
 import SaveScheduleModal from "./SaveScheduleModal";
+import { UUID } from "crypto";
 
 // toggling the use of a prefix on the ShiftSliderComponent's key ensures the Designer tab
 // gets refreshed back to its previously saved state by clicking on the same schedule again in
@@ -20,7 +21,9 @@ import SaveScheduleModal from "./SaveScheduleModal";
 let usePrefix: boolean = false;
 
 export default function ScheduleAnalyzer() {
+    const random_id_for_init: UUID = "00000000-0000-0000-0000-000000000000";
     const todaysDate: Date = new Date();
+    const [userId, setUserId] = useState<UUID>("779a66e9-10fd-47e5-bfda-870ab4a7b5a4");
     const [modalOpen, setModalOpen] = useState<boolean>(false);
     const [maxY, setMaxY] = useState<number>(1);
     const [covMaxY, setCovMaxY] = useState<number>(1);
@@ -29,6 +32,7 @@ export default function ScheduleAnalyzer() {
         group_name: "",
         facility_name: "",
         department_name: "",
+        department_id: random_id_for_init,
         data_start_date: todaysDate,
         data_end_date: todaysDate,
         schedule_name: "",
@@ -53,12 +57,13 @@ export default function ScheduleAnalyzer() {
         client_group: statusHeaderData.group_name,
         facility: statusHeaderData.facility_name,
         department: statusHeaderData.department_name,
+        department_id: statusHeaderData.department_id,
         yearly_cost: 0.0,
         shifts: new Map<string, ShiftDataType>(),
     };
 
-    function retrieveAllScheduleData(group: string, facility: string, department: string): void {
-        allSchedulesDataManager.retrieveAllSchedulesData(group, facility, department, setAllSchedulesData);
+    function retrieveAllScheduleData(department_id: UUID): void {
+        allSchedulesDataManager.retrieveAllSchedulesData(department_id, setAllSchedulesData);
 
         setCurrSchedData(emptySchedule);
     }
@@ -201,7 +206,7 @@ export default function ScheduleAnalyzer() {
                     <div className="divLeft">
                         <Tabs>
                             <Tab eventKey="data_loader" title="Data Loader">
-                                <DataLoaderPanel arrivals_update_callback={updateArrivalsData} retrieve_all_schedules_callback={retrieveAllScheduleData} />
+                                <DataLoaderPanel user_id={userId} arrivals_update_callback={updateArrivalsData} retrieve_all_schedules_callback={retrieveAllScheduleData} />
                             </Tab>
                             <Tab eventKey="existing_schedules" title="Schedules">
                                 <SchedulesPanel select_schedule_callback={setNewSelectedSchedule} delete_schedule_callback={deleteSchedule} all_schedules_data={allSchedulesData} />

@@ -20,8 +20,6 @@ function ShiftSliderComponent(
         shift: ShiftDataType;
     }
 ) {
-    //const dataAccessor: PostLoginData = new PostLoginData();
-    //const postLoginData: Map<string, Map<string, Map<string, { start: Date, end: Date }>>> = dataAccessor.getPostLoginData();
     const [localShift, setLocalShift] = useState(shift);
     const [startStopValues, setStartStopValues] = useState<number[]>([localShift.start, localShift.start + localShift.duration]);
     const [checked, setChecked] = useState([true, true, true, true, true, true, true]);

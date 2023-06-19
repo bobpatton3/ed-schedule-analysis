@@ -1,3 +1,4 @@
+import { UUID } from "crypto";
 import { ScheduleDataType, ShiftDataType } from "./AllSchedulesData";
 
 export type WeekCoverageDataType = {
@@ -20,6 +21,7 @@ export type StatusHeaderDataType = {
     group_name: string,
     facility_name: string,
     department_name: string,
+    department_id: UUID,
     data_start_date: Date,
     data_end_date: Date,
     schedule_name: string,
@@ -29,7 +31,19 @@ export type StatusHeaderDataType = {
 export default class CurrentScheduleAndCoverageData {
 
     private coverage_data: CoverageDataType;
-    private current_schedule: ScheduleDataType = { pk: "", owner: "", schedule_name: "", creationDate: new Date(), updateDate: new Date(), client_group: "", facility: "", department: "", shifts: new Map<string, ShiftDataType>(), yearly_cost: 0 };
+    private current_schedule: ScheduleDataType = {
+        pk: "",
+        owner: "",
+        schedule_name: "",
+        creationDate: new Date(),
+        updateDate: new Date(),
+        client_group: "",
+        facility: "",
+        department: "",
+        department_id: "00000000-0000-0000-0000-000000000000",
+        shifts: new Map<string, ShiftDataType>(),
+        yearly_cost: 0
+    };
     private y_max: number;
     private phys_peak_capacity = 12.0;
     private app_peak_capacity = 8.0;

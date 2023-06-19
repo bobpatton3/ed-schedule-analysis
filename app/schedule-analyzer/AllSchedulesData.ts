@@ -1,3 +1,4 @@
+import { UUID } from "crypto";
 import { Dispatch, SetStateAction } from "react";
 
 export type ShiftDataType = {
@@ -18,6 +19,7 @@ export type ScheduleDataType = {
     client_group: string;
     facility: string;
     department: string;
+    department_id: UUID;
     shifts: Map<string, ShiftDataType>;
     yearly_cost: number;
 };
@@ -40,15 +42,13 @@ export type ShiftWithScheduleDataType = {
 
 export default class AllSchedulesData {
     public async retrieveAllSchedulesData(
-        group: string,
-        facility: string,
-        department: string,
+        department_id: UUID,
         setStateCallback: Dispatch<SetStateAction<Map<string, ScheduleDataType>>>,
         id?: string,
         setCurrSchedData?: Dispatch<SetStateAction<ScheduleDataType>>,
     ) {
 
-        const get_schedules_url = "http://localhost:8080/schedules/" + group + "/" + facility + "/" + department;
+        const get_schedules_url = "http://localhost:8080/schedules/" + department_id;
 
         const res = await fetch(get_schedules_url);
 
@@ -72,6 +72,7 @@ export default class AllSchedulesData {
                     client_group: r.client_group,
                     facility: r.facility,
                     department: r.department,
+                    department_id: r.department_id,
                     shifts: new Map<string, ShiftDataType>(),
                     yearly_cost: 0.0,
                 };
@@ -112,6 +113,7 @@ export default class AllSchedulesData {
             client_group: "",
             facility: "",
             department: "",
+            department_id: "00000000-0000-0000-0000-000000000000",
             shifts: new Map<string, ShiftDataType>(),
             yearly_cost: 0.0,
         };
@@ -163,9 +165,7 @@ export default class AllSchedulesData {
             const scheduleSaveData = await Promise.all([scheduleSaveAPIResp]);
 
             this.retrieveAllSchedulesData(
-                schedule.client_group,
-                schedule.facility,
-                schedule.department,
+                schedule.department_id,
                 setAllSchedulesData,
                 scheduleSaveData[0],
                 setCurrSchedData,
