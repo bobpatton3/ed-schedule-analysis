@@ -16,9 +16,6 @@ export type ScheduleDataType = {
     schedule_name: string;
     creationDate: Date;
     updateDate: Date;
-    client_group: string;
-    facility: string;
-    department: string;
     department_id: UUID;
     shifts: Map<string, ShiftDataType>;
     yearly_cost: number;
@@ -30,9 +27,6 @@ export type ShiftWithScheduleDataType = {
     schedule_name: string;
     creation_date: Date;
     update_date: Date;
-    client_group: string;
-    facility: string;
-    department: string;
     department_id: UUID;
     shift_id: string;
     start_hour: number;
@@ -70,9 +64,6 @@ export default class AllSchedulesData {
                     schedule_name: r.schedule_name,
                     creationDate: r.creation_date,
                     updateDate: r.update_date,
-                    client_group: r.client_group,
-                    facility: r.facility,
-                    department: r.department,
                     department_id: r.department_id,
                     shifts: new Map<string, ShiftDataType>(),
                     yearly_cost: 0.0,
@@ -111,9 +102,6 @@ export default class AllSchedulesData {
             schedule_name: schedule_name0,
             creationDate: new Date(),
             updateDate: new Date(),
-            client_group: "",
-            facility: "",
-            department: "",
             department_id: "00000000-0000-0000-0000-000000000000",
             shifts: new Map<string, ShiftDataType>(),
             yearly_cost: 0.0,
@@ -189,9 +177,6 @@ export default class AllSchedulesData {
                     schedule_name: schedule.schedule_name,
                     creation_date: schedule.creationDate,
                     update_date: schedule.updateDate,
-                    client_group: schedule.client_group,
-                    facility: schedule.facility,
-                    department: schedule.department,
                     department_id: schedule.department_id,
                     shift_id: shift.id,
                     start_hour: shift.start,

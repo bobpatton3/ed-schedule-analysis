@@ -37,9 +37,6 @@ export default class CurrentScheduleAndCoverageData {
         schedule_name: "",
         creationDate: new Date(),
         updateDate: new Date(),
-        client_group: "",
-        facility: "",
-        department: "",
         department_id: "00000000-0000-0000-0000-000000000000",
         shifts: new Map<string, ShiftDataType>(),
         yearly_cost: 0

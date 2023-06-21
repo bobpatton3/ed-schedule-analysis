@@ -1,7 +1,7 @@
 "use client";
 
 import ArrivalsData, { ArrivalsDataType } from "./ArrivalsData";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import CurrentScheduleAndCoverageData, {
     CoverageDataType,
     StatusHeaderDataType,
@@ -56,9 +56,6 @@ export default function ScheduleAnalyzer() {
         schedule_name: "NEW SCHED",
         creationDate: new Date(),
         updateDate: new Date(),
-        client_group: statusHeaderData.group_name,
-        facility: statusHeaderData.facility_name,
-        department: statusHeaderData.department_name,
         department_id: statusHeaderData.department_id,
         yearly_cost: 0.0,
         shifts: new Map<string, ShiftDataType>(),
