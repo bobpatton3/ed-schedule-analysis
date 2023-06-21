@@ -1,12 +1,11 @@
 "use client";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Button, FloatingLabel, Form } from "react-bootstrap";
-import PostLoginData, { DepartmentConfigurationType } from "./PostLoginData";
-import ArrivalsData from "./ArrivalsData";
-import CurrentScheduleAndCoverageData, { StatusHeaderDataType } from "./CurrentScheduleAndCoverageData";
-import { UUID, randomUUID } from "crypto";
+import { StatusHeaderDataType } from "./CurrentScheduleAndCoverageData";
+import { UUID } from "crypto";
+import { DepartmentConfigurationType, PostLoginDataContext } from "@/context/context";
 
 const DataLoaderPanel = (
     { user_id, arrivals_update_callback, retrieve_all_schedules_callback }:
@@ -16,6 +15,9 @@ const DataLoaderPanel = (
             retrieve_all_schedules_callback: (department_id: UUID) => void,
         }
 ) => {
+
+    const groups: Map<string, Map<string, Map<string, DepartmentConfigurationType>>> = useContext(PostLoginDataContext).postLoginData;
+
     const [startDatePickerDisabled, setStartDatePickerDisabled] = useState(true);
     const [endDatePickerDisabled, setEndDatePickerDisabled] = useState(true);
     const [loadButtonDisabled, setLoadButtonDisabled] = useState(true);
@@ -42,9 +44,9 @@ const DataLoaderPanel = (
     const [defaultGroupSelectOptionDisabled, setDefaultGroupSelectOptionDisabled] = useState(false);
     const [defaultFacilitySelectOptionDisabled, setDefaultFacilitySelectOptionDisabled] = useState(false);
     const [defaultDepartmentSelectOptionDisabled, setDefaultDepartmentSelectOptionDisabled] = useState(false);
-    const [postLoginData, setPostLoginData] = useState<Map<string, Map<string, Map<string, DepartmentConfigurationType>>>>(new Map<string, Map<string, Map<string, DepartmentConfigurationType>>>());
 
-    PostLoginData.getPostLoginData(user_id, setPostLoginData);
+    const now: Date = new Date();
+    console.log("DataLoaderPanel running at " + now);
 
     const dataStartDateChanged = (newStartDate: Date | null) => {
         if (newStartDate) {
@@ -65,9 +67,11 @@ const DataLoaderPanel = (
         return day != 0;
     };
 
+    console.log("DataLoaderPanel.onGroupSelect: department_id  = " + groups.get("A1 Emergency Physicians")?.get("Memorial Hospital")?.get("Main ED")?.department_id);
     function onGroupSelect(e: any) {
-        if (postLoginData) {
-            const grp: Map<string, Map<string, DepartmentConfigurationType>> = postLoginData.get(e.target.value)!;
+
+        if (groups) {
+            const grp: Map<string, Map<string, DepartmentConfigurationType>> = groups.get(e.target.value)!;
             setChosenGroup(e.target.value);
             setFacilities(grp);
             setDepartments(new Map<string, DepartmentConfigurationType>());
@@ -139,13 +143,12 @@ const DataLoaderPanel = (
         arrivals_update_callback(status_header_data);
     }
 
-
     return (
         <div className="tabPanelDiv">
             <FloatingLabel controlId="floatingSelect" label="Group:" className="dataLoaderLabel">
                 <Form.Select onChange={onGroupSelect} >
                     <option disabled={defaultGroupSelectOptionDisabled}>Choose your desired group</option>
-                    {Array.from(postLoginData?.keys()).map((k: string) => { return <option value={k} key={k}>{k}</option>; })}
+                    {Array.from(groups.keys()).map((k: string) => { return <option value={k} key={k}>{k}</option>; })}
                 </Form.Select>
             </FloatingLabel>
             <FloatingLabel controlId="floatingSelect" label="Facility:" className="dataLoaderLabel">

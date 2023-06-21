@@ -1,7 +1,7 @@
 "use client";
 
 import ArrivalsData, { ArrivalsDataType } from "./ArrivalsData";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import CurrentScheduleAndCoverageData, {
     CoverageDataType,
     StatusHeaderDataType,
@@ -21,9 +21,11 @@ import { UUID } from "crypto";
 let usePrefix: boolean = false;
 
 export default function ScheduleAnalyzer() {
-    const random_id_for_init: UUID = "00000000-0000-0000-0000-000000000000";
+    // TODO:
+    const userId = "779a66e9-10fd-47e5-bfda-870ab4a7b5a4";
+
+    const uuid_for_init: UUID = "00000000-0000-0000-0000-000000000000";
     const todaysDate: Date = new Date();
-    const [userId, setUserId] = useState<UUID>("779a66e9-10fd-47e5-bfda-870ab4a7b5a4");
     const [modalOpen, setModalOpen] = useState<boolean>(false);
     const [maxY, setMaxY] = useState<number>(1);
     const [covMaxY, setCovMaxY] = useState<number>(1);
@@ -32,7 +34,7 @@ export default function ScheduleAnalyzer() {
         group_name: "",
         facility_name: "",
         department_name: "",
-        department_id: random_id_for_init,
+        department_id: uuid_for_init,
         data_start_date: todaysDate,
         data_end_date: todaysDate,
         schedule_name: "",
@@ -155,7 +157,7 @@ export default function ScheduleAnalyzer() {
             }
             if (sched_name != statusHeaderData.schedule_name) {
                 setStatusHeaderData({ ...statusHeaderData, schedule_name: sched_name });
-                const newSchedData: ScheduleDataType = { ...currSchedData, schedule_name: sched_name };
+                const newSchedData: ScheduleDataType = { ...currSchedData, pk: uuid_for_init, schedule_name: sched_name, department_id: statusHeaderData.department_id };
                 setCurrSchedData(newSchedData);
                 allSchedulesDataManager.saveSchedule(newSchedData, setAllSchedulesData, setCurrSchedData);
             } else {
@@ -186,6 +188,7 @@ export default function ScheduleAnalyzer() {
     physScheduleShiftsArray.sort((a, b) => (a.start - b.start) ? (a.start - b.start) : (a.duration - b.duration));
     appScheduleShiftsArray.sort((a, b) => (a.start - b.start) ? (a.start - b.start) : (a.duration - b.duration));
 
+    console.log("page.tsx loading");
     if (arrivalsData && currCovData) {
         return (
 

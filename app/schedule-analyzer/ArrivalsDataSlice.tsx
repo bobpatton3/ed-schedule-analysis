@@ -9,6 +9,7 @@ import PercentCapacityChart from "./PercentCapacityChart";
 import HeatMap from "./HeatMap";
 
 const ArrivalsDataSlice = ({ dept_arrivals_data, dept_coverage_data, maxY }: { dept_arrivals_data: WeekArrivalsDataType, dept_coverage_data: WeekCoverageDataType, maxY: number }) => {
+
     return (
         <div className="tabPanelDiv">
             <Tabs transition={false} mountOnEnter={false} unmountOnExit={false} fill={true} justify={true}>

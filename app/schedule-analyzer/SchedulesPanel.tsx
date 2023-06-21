@@ -22,6 +22,7 @@ function SchedulesPanel(
         all_schedules_data: Map<string, ScheduleDataType>;
     }
 ) {
+
     const [pkModalStatePair, setPkModalStatePair] = useState<PkModalStatePair>({ pk: "", modal_state: false });
 
     const onClickScheduleNameButton = (id: GridRowId): void => {

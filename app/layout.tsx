@@ -1,8 +1,7 @@
 "use client";
 import "./globals.css";
 import { Inter } from "next/font/google";
-import { MyDataContext, MyGlobalDataType } from "../context/context";
-import { useState } from "react";
+import { PostLoginDataContextProvider } from "../context/context";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -11,13 +10,14 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [myData, setMyData] = useState<MyGlobalDataType>();
 
   return (
-    <MyDataContext.Provider value={{ myData, setMyData }}>
+    <PostLoginDataContextProvider >
       <html lang="en">
-        <body className={inter.className}>{children}</body>
+        <body className={inter.className}>
+          {children}
+        </body>
       </html>
-    </MyDataContext.Provider>
+    </PostLoginDataContextProvider>
   );
 }

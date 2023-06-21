@@ -15,6 +15,7 @@ const ArrivalsVsCoverageChart = ({
     day_coverage_data: number[],
     maxY: number,
 }) => {
+
     const series = [
         {
             name: "Coverage",

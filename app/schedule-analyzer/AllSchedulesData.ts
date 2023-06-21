@@ -33,6 +33,7 @@ export type ShiftWithScheduleDataType = {
     client_group: string;
     facility: string;
     department: string;
+    department_id: UUID;
     shift_id: string;
     start_hour: number;
     duration: number;
@@ -191,6 +192,7 @@ export default class AllSchedulesData {
                     client_group: schedule.client_group,
                     facility: schedule.facility,
                     department: schedule.department,
+                    department_id: schedule.department_id,
                     shift_id: shift.id,
                     start_hour: shift.start,
                     duration: shift.duration,

@@ -1,42 +1,41 @@
 "use client";
 import React, { createContext, useContext, useState } from "react";
+import { UUID } from "crypto";
 
-export type MyGlobalDataType = {
-  group: string,
-  facility: string,
-  department: string,
-  dataStartDate: Date,
-  dataEndDate: Date,
+export type DepartmentConfigurationType = {
+  department_id: UUID,
+  department_name: string,
+  data_start_date: Date,
+  data_end_date: Date,
+  phys_hourly_cost: number,
+  phys_peak_capacity: number,
+  app_hourly_cost: number,
+  app_peak_capacity: number,
 };
 
-type MyGlobalContextType = {
-  myData: MyGlobalDataType | undefined;
-  setMyData: (myData: MyGlobalDataType) => void;
+type PostLoginDataGlobalContextType = {
+  postLoginData: Map<string, Map<string, Map<string, DepartmentConfigurationType>>>;
+  setPostLoginData: (postLoginDataContext: Map<string, Map<string, Map<string, DepartmentConfigurationType>>>) => void;
 };
 
-export const MyDataContext = createContext<MyGlobalContextType>({
-  myData: {
-    group: "",
-    facility: "",
-    department: "",
-    dataStartDate: new Date(),
-    dataEndDate: new Date(),
-  },
-  setMyData: () => { },
-});
-
-export const useMyDataContext = () => useContext(MyDataContext);
-
-/*
-export const MyContextProvider: React.FC = ({ children }: { children: React.ReactNode}) => {
-  const [myData, setMyData] = useState({
-    dataStartDate: "2022-01-01",
-    dataEndDate: "2023-01-01",
-  });
-
-  return <MyDataContext.Provider value={{ state, setState }}>{children}</MyDataContext.Provider>;
+const postLoginDataInstance: PostLoginDataGlobalContextType = {
+  postLoginData: new Map<string, Map<string, Map<string, DepartmentConfigurationType>>>(),
+  setPostLoginData: (newPostLoginData: Map<string, Map<string, Map<string, DepartmentConfigurationType>>>) => { postLoginDataInstance.postLoginData = newPostLoginData },
 };
 
-// Export the context
-export default MyContext;
-*/
+export const PostLoginDataContext = createContext<PostLoginDataGlobalContextType>(postLoginDataInstance);
+
+//export const usePostLoginDataContext = () => useContext(PostLoginDataContext);
+export const PostLoginDataContextProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
+
+  return (
+    <PostLoginDataContext.Provider value={postLoginDataInstance}>
+      {children}
+    </PostLoginDataContext.Provider>
+  );
+};
+
