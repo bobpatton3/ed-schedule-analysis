@@ -16,7 +16,7 @@ function PercentCapacityChart(
 
     const percent_of_peak: number[] = new Array<number>(25);
     for (let i = 0; i < 25; i++) {
-        if (day_coverage_data[i] == 0) {
+        if (day_coverage_data[i] === 0) {
             percent_of_peak[i] = 0;
         } else {
             percent_of_peak[i] = Math.ceil(100.0 * day_arrivals_data[i] / day_coverage_data[i]);

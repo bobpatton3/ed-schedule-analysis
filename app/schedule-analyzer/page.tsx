@@ -21,7 +21,16 @@ import { UUID } from "crypto";
 let usePrefix: boolean = false;
 
 export default function ScheduleAnalyzer() {
-    // TODO:
+    /* TODO:
+     * 1. flip between sculpted and blocked
+     * 2. display peak capacities and provide ability to temporarily override 
+     * 3. Auth
+     * 4. secure database name and password
+     * 5. deploy in Docker
+     * 6. deploy on AWS
+     * 7. domain name
+     *
+     */
     const userId = "779a66e9-10fd-47e5-bfda-870ab4a7b5a4";
 
     const uuid_for_init: UUID = "00000000-0000-0000-0000-000000000000";
@@ -30,11 +39,18 @@ export default function ScheduleAnalyzer() {
     const [maxY, setMaxY] = useState<number>(1);
     const [covMaxY, setCovMaxY] = useState<number>(1);
     const [arrMaxY, setArrMaxY] = useState<number>(1);
+    const [physWeeklyHours, setPhysWeeklyHours] = useState<number>(0.0);
+    const [appWeeklyHours, setAppWeeklyHours] = useState<number>(0.0);
+    const [yearlyCost, setYearlyCosts] = useState<number>(0.0);
     const [statusHeaderData, setStatusHeaderData] = useState<StatusHeaderDataType>({
         group_name: "",
         facility_name: "",
         department_name: "",
         department_id: uuid_for_init,
+        phys_hourly_rate: 0.0,
+        phys_peak_capacity: 0.0,
+        app_hourly_rate: 0.0,
+        app_peak_capacity: 0.0,
         data_start_date: todaysDate,
         data_end_date: todaysDate,
         schedule_name: "",
@@ -67,9 +83,9 @@ export default function ScheduleAnalyzer() {
         setCurrSchedData(emptySchedule);
     }
 
-    const curr_sched_cov_data: CurrentScheduleAndCoverageData = new CurrentScheduleAndCoverageData();
-    const [currCovData, setCurrCovData] = useState<CoverageDataType>(curr_sched_cov_data.getCoverageData());
-    const [currSchedData, setCurrSchedData] = useState<ScheduleDataType>(curr_sched_cov_data.getCurrentSchedule());
+    const curr_sched_cov_data_mgr: CurrentScheduleAndCoverageData = new CurrentScheduleAndCoverageData();
+    const [currCovData, setCurrCovData] = useState<CoverageDataType>(curr_sched_cov_data_mgr.getCoverageData());
+    const [currSchedData, setCurrSchedData] = useState<ScheduleDataType>(curr_sched_cov_data_mgr.getCurrentSchedule());
 
     function updateArrivalsData(status_header_data: StatusHeaderDataType) {
         arrivalsDataManager.getArrivalsData(status_header_data, setArrivalsData, updateArrMaxY);
@@ -93,15 +109,39 @@ export default function ScheduleAnalyzer() {
             // Some of these below seem redundant but this statemanagement thing is a bit tricky
             // I could change getCoverageData to be a utility function that you pass the schedule in to which would 
             // preclude needing to maintain any state within curr_sched_cov_data
-            curr_sched_cov_data.setCurrentSchedule(selectedSched);
+            curr_sched_cov_data_mgr.setCurrentSchedule(
+                selectedSched,
+                statusHeaderData.phys_peak_capacity,
+                statusHeaderData.app_peak_capacity
+            );
             setCurrSchedData(selectedSched);
-            setCurrCovData(curr_sched_cov_data.getCoverageData());
-            updateCovMaxY(curr_sched_cov_data.getMaxY());
+            setCurrCovData(curr_sched_cov_data_mgr.getCoverageData());
+            updateCovMaxY(curr_sched_cov_data_mgr.getMaxY());
 
             const newStatusHeaderData = { ...statusHeaderData, schedule_name: selectedSched.schedule_name };
             setStatusHeaderData(newStatusHeaderData);
+            calculateProviderWeeklyHoursAndYearlyCost(selectedSched);
             usePrefix = !usePrefix;
         }
+    }
+
+    function calculateProviderWeeklyHoursAndYearlyCost(schedule: ScheduleDataType) {
+        let physHours: number = 0.0;
+        let appHours: number = 0.0;
+
+        schedule.shifts.forEach((shift) => {
+            if (!shift.deleteFlag) {
+                if (shift.providerType === "PHYS") {
+                    physHours += shift.duration * shift.daysOfWeek.filter(Boolean).length;
+                } else {
+                    appHours += shift.duration * shift.daysOfWeek.filter(Boolean).length;
+                }
+            }
+        });
+
+        setPhysWeeklyHours(physHours);
+        setAppWeeklyHours(appHours);
+        setYearlyCosts((physHours * statusHeaderData.phys_hourly_rate + appHours * statusHeaderData.app_hourly_rate) * 52 / 1000000);
     }
 
     function updateSchedAndCovWhenShiftModified(shift_data: ShiftDataType) {
@@ -116,10 +156,13 @@ export default function ScheduleAnalyzer() {
         newShifts.set(shift_data.id, shift_data);
         newSchedData.shifts = newShifts;
         setCurrSchedData(newSchedData);
+        calculateProviderWeeklyHoursAndYearlyCost(newSchedData);
 
-        curr_sched_cov_data.setCurrentSchedule(newSchedData);
-        setCurrCovData(curr_sched_cov_data.getCoverageData());
-        updateCovMaxY(curr_sched_cov_data.getMaxY());
+        curr_sched_cov_data_mgr.setCurrentSchedule(newSchedData,
+            statusHeaderData.phys_peak_capacity,
+            statusHeaderData.app_peak_capacity);
+        setCurrCovData(curr_sched_cov_data_mgr.getCoverageData());
+        updateCovMaxY(curr_sched_cov_data_mgr.getMaxY());
 
     }
 
@@ -134,8 +177,10 @@ export default function ScheduleAnalyzer() {
 
     function clearForNewDesign() {
         setCurrSchedData(emptySchedule);
-        curr_sched_cov_data.setCurrentSchedule(emptySchedule);
-        setCurrCovData(curr_sched_cov_data.getCoverageData());
+        curr_sched_cov_data_mgr.setCurrentSchedule(emptySchedule,
+            statusHeaderData.phys_peak_capacity,
+            statusHeaderData.app_peak_capacity);
+        setCurrCovData(curr_sched_cov_data_mgr.getCoverageData());
         setStatusHeaderData({ ...statusHeaderData, schedule_name: "" })
     }
 
@@ -201,6 +246,17 @@ export default function ScheduleAnalyzer() {
                     <label className="statusHeaderInfo">{statusHeaderData.data_end_date.toLocaleDateString()}</label>
                     <label className="edSchedStatusHdr">Schedule: </label>
                     <label className="statusHeaderInfo">{statusHeaderData.schedule_name} </label>
+                    <br />
+                    <label className="edSchedStatusHdr">Phys:</label>
+                    <label className="statusHeaderInfo">{physWeeklyHours} hours</label>
+                    <label className="edSchedStatusHdr">APP:</label>
+                    <label className="statusHeaderInfo">{appWeeklyHours} hours</label>
+                    <label className="edSchedStatusHdr">Cost:</label>
+                    <label className="statusHeaderInfo">${yearlyCost.toFixed(1)}M</label>
+                    <label className="edSchedStatusHdr">Phys Peak Capacity:</label>
+                    <label className="statusHeaderInfo">{statusHeaderData.phys_peak_capacity}</label>
+                    <label className="edSchedStatusHdr">App Peak Capacity:</label>
+                    <label className="statusHeaderInfo">{statusHeaderData.app_peak_capacity}</label>
                 </div>
                 <div className="controlAndChartsDiv">
                     <div className="divLeft">

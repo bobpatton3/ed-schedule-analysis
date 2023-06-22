@@ -22,6 +22,10 @@ export type StatusHeaderDataType = {
     facility_name: string,
     department_name: string,
     department_id: UUID,
+    phys_hourly_rate: number,
+    phys_peak_capacity: number,
+    app_hourly_rate: number,
+    app_peak_capacity: number,
     data_start_date: Date,
     data_end_date: Date,
     schedule_name: string,
@@ -42,8 +46,6 @@ export default class CurrentScheduleAndCoverageData {
         yearly_cost: 0
     };
     private y_max: number;
-    private phys_peak_capacity = 12.0;
-    private app_peak_capacity = 8.0;
     private phys_profile = [1.5, 1.2, 1.1, 1.0, 0.9, 0.8, 0.5];
     private app_profile = [1.3, 1.1, 1.0, 1.0, 1.0, 1.0, 0.6];
 
@@ -96,9 +98,9 @@ export default class CurrentScheduleAndCoverageData {
         return this.y_max;
     }
 
-    public setCurrentSchedule(newSchedule: ScheduleDataType) {
+    public setCurrentSchedule(newSchedule: ScheduleDataType, phys_peak_capacity: number, app_peak_capacity: number) {
         this.current_schedule = newSchedule;
-        this.calculateCoverageData();
+        this.calculateCoverageData(phys_peak_capacity, app_peak_capacity);
     }
 
     public getCurrentSchedule(): ScheduleDataType {
@@ -107,19 +109,19 @@ export default class CurrentScheduleAndCoverageData {
 
     private bitToDay: Array<keyof WeekCoverageDataType> = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT", "AVG"];
 
-    private calculateCoverageData() {
+    private calculateCoverageData(phys_peak_capacity: number, app_peak_capacity: number) {
         const eightDaysArrayFull = new Array(192).fill(0);
         const eightDaysArrayl5CC = new Array(192).fill(0);
 
         this.current_schedule.shifts.forEach((value, key) => {
 
-            const profile = new Array(value.duration).fill((value.providerType == "PHYS" ? this.phys_peak_capacity : this.app_peak_capacity));
+            const profile = new Array(value.duration).fill((value.providerType === "PHYS" ? phys_peak_capacity : app_peak_capacity));
 
             for (let i = 0; i < 3; i++) {
-                profile[i] = profile[i] * (value.providerType == "PHYS" ? this.phys_profile[i] : this.app_profile[i]);
+                profile[i] = profile[i] * (value.providerType === "PHYS" ? this.phys_profile[i] : this.app_profile[i]);
                 // k counts back from the end of the shift
                 let k = value.duration - 1 - i;
-                profile[k] = profile[k] * (value.providerType == "PHYS" ? this.phys_profile[6 - i] : this.app_profile[6 - i]);
+                profile[k] = profile[k] * (value.providerType === "PHYS" ? this.phys_profile[6 - i] : this.app_profile[6 - i]);
             }
 
             if (!value.deleteFlag) {
@@ -128,7 +130,7 @@ export default class CurrentScheduleAndCoverageData {
                         let startOffset = i * 24 + value.start;
                         for (let k = 0; k < value.duration; k++) {
                             eightDaysArrayFull[startOffset + k] += profile[k];
-                            if (value.providerType == "PHYS") eightDaysArrayl5CC[startOffset + k] += profile[k];
+                            if (value.providerType === "PHYS") eightDaysArrayl5CC[startOffset + k] += profile[k];
                         }
                     }
                 }
