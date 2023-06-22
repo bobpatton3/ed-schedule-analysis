@@ -22,13 +22,13 @@ let usePrefix: boolean = false;
 
 export default function ScheduleAnalyzer() {
     /* TODO:
-     * 1. flip between sculpted and blocked
-     * 2. display peak capacities and provide ability to temporarily override 
-     * 3. Auth
-     * 4. secure database name and password
-     * 5. deploy in Docker
-     * 6. deploy on AWS
-     * 7. domain name
+     * 1. Auth
+     * 2. secure database name and password
+     * 3. deploy in Docker
+     * 4. deploy on AWS
+     * 5. domain name
+     * 6. ability to flip between sculpted and blocked
+     * 7. ability to temporarily override peak capacities
      *
      */
     const userId = "779a66e9-10fd-47e5-bfda-870ab4a7b5a4";
@@ -219,10 +219,6 @@ export default function ScheduleAnalyzer() {
         });
         setAllSchedulesData(newAllSchedules);
     }
-
-    /* TODOs:
-        1. 
-    */
 
     const currentScheduleShiftsArray: ShiftDataType[] = Array.from(currSchedData.shifts.values());
     const physScheduleShiftsArray: ShiftDataType[] = currentScheduleShiftsArray.filter((shift) => (shift.providerType === "PHYS"));
