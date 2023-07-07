@@ -8,9 +8,8 @@ import { UUID } from "crypto";
 import { DepartmentConfigurationType, PostLoginDataContext } from "@/context/context";
 
 const DataLoaderPanel = (
-    { user_id, arrivals_update_callback, retrieve_all_schedules_callback }:
+    { arrivals_update_callback, retrieve_all_schedules_callback }:
         {
-            user_id: UUID,
             arrivals_update_callback: (status_header_data: StatusHeaderDataType,) => void,
             retrieve_all_schedules_callback: (department_id: UUID) => void,
         }

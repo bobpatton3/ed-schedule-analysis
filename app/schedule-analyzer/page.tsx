@@ -14,6 +14,8 @@ import ArrivalsDataSlice from "./ArrivalsDataSlice";
 import ShiftSliderComponent from "./ShiftSliderComponent";
 import SaveScheduleModal from "./SaveScheduleModal";
 import { UUID } from "crypto";
+import { useRouter } from "next/navigation";
+import { useUser } from "@auth0/nextjs-auth0/client";
 
 // toggling the use of a prefix on the ShiftSliderComponent's key ensures the Designer tab
 // gets refreshed back to its previously saved state by clicking on the same schedule again in
@@ -23,15 +25,23 @@ let usePrefix: boolean = false;
 export default function ScheduleAnalyzer() {
     /* TODO:
      * 1. Auth
-     * 2. secure database name and password
-     * 3. deploy in Docker
-     * 4. deploy on AWS
-     * 5. domain name
-     * 6. ability to flip between sculpted and blocked
-     * 7. ability to temporarily override peak capacities
+     * 2. investigate MIT License
+     * 3. secure database name and password
+     * 4. deploy in Docker
+     * 5. deploy on AWS
+     * 6. domain name
+     * 7. ability to flip between sculpted and blocked
+     * 8. ability to temporarily override peak capacities
      *
      */
-    const userId = "779a66e9-10fd-47e5-bfda-870ab4a7b5a4";
+
+    const { user, error, isLoading } = useUser();
+
+    if (!user) {
+        const router = useRouter();
+        router.push('/');
+        return <div>re-routing...</div>
+    }
 
     const uuid_for_init: UUID = "00000000-0000-0000-0000-000000000000";
     const todaysDate: Date = new Date();
@@ -242,6 +252,7 @@ export default function ScheduleAnalyzer() {
                     <label className="statusHeaderInfo">{statusHeaderData.data_end_date.toLocaleDateString()}</label>
                     <label className="edSchedStatusHdr">Schedule: </label>
                     <label className="statusHeaderInfo">{statusHeaderData.schedule_name} </label>
+
                     <br />
                     <label className="edSchedStatusHdr">Phys:</label>
                     <label className="statusHeaderInfo">{physWeeklyHours} hours</label>
@@ -253,12 +264,15 @@ export default function ScheduleAnalyzer() {
                     <label className="statusHeaderInfo">{statusHeaderData.phys_peak_capacity}</label>
                     <label className="edSchedStatusHdr">App Peak Capacity:</label>
                     <label className="statusHeaderInfo">{statusHeaderData.app_peak_capacity}</label>
+
+                    <br />
+                    <a href="/api/auth/logout">Logout</a>
                 </div>
                 <div className="controlAndChartsDiv">
                     <div className="divLeft">
                         <Tabs>
                             <Tab eventKey="data_loader" title="Data Loader">
-                                <DataLoaderPanel user_id={userId} arrivals_update_callback={updateArrivalsData} retrieve_all_schedules_callback={retrieveAllScheduleData} />
+                                <DataLoaderPanel arrivals_update_callback={updateArrivalsData} retrieve_all_schedules_callback={retrieveAllScheduleData} />
                             </Tab>
                             <Tab eventKey="existing_schedules" title="Schedules">
                                 <SchedulesPanel select_schedule_callback={setNewSelectedSchedule} delete_schedule_callback={deleteSchedule} all_schedules_data={allSchedulesData} />
@@ -310,4 +324,3 @@ export default function ScheduleAnalyzer() {
         );
     }
 }
-

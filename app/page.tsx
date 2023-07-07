@@ -1,27 +1,32 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Button } from "react-bootstrap";
 import { DepartmentConfigurationType, PostLoginDataContext } from "@/context/context";
 import { UUID } from "crypto";
 import { useContext } from "react";
-
+import { useUser } from "@auth0/nextjs-auth0/client";
 
 export default function Home() {
+  const { user, error, isLoading } = useUser();
+
   const router = useRouter();
-  const user_id = "779a66e9-10fd-47e5-bfda-870ab4a7b5a4";
   const postLoginDataContext = useContext(PostLoginDataContext);
 
-  async function getPostLoginData(user_id: UUID, post_login_data_callback: (postLoginDataRet: Map<string, Map<string, Map<string, DepartmentConfigurationType>>>) => void) {
+  async function getPostLoginData(username: String, post_login_data_callback: (postLoginDataRet: Map<string, Map<string, Map<string, DepartmentConfigurationType>>>) => void) {
 
     const now: Date = new Date();
-    const get_dept_config_url = "http://localhost:8080/post_login_info/" + user_id.toString();
+    const get_dept_config_url = "http://localhost:8080/post_login_info/" + username.toString();
+
+    console.log("url = " + get_dept_config_url);
 
     const res = await fetch(get_dept_config_url);
 
     const deptConfigAPIResp = res.json();
 
+    console.log("deptConfigAPIResp = " + deptConfigAPIResp);
+
     const deptConfigData = await Promise.all([deptConfigAPIResp]);
+    console.log("deptConfigData = " + deptConfigData);
 
     const deptConfigurations: Map<string, Map<string, Map<string, DepartmentConfigurationType>>> =
       new Map<string, Map<string, Map<string, DepartmentConfigurationType>>>();
@@ -54,20 +59,20 @@ export default function Home() {
   };
 
   function postLoginDataCallback(postLoginDataRet: Map<string, Map<string, Map<string, DepartmentConfigurationType>>>) {
-    console.log("ScheduleAnalyzerLogin.onClickLoginButton");
+    console.log("ScheduleAnalyzerLogin.postLoginDataCallback");
     postLoginDataContext.setPostLoginData(postLoginDataRet);
     router.push('/schedule-analyzer');
   }
 
-  const onClickLoginButton = () => {
-    getPostLoginData(user_id, postLoginDataCallback);
-  };
+  if (!isLoading) {
+    if (error) return <div>{error.message}</div>
+    else if (!user) {
+      router.push('/api/auth/login');
+    }
+    else if (user.email) {
+      getPostLoginData(user.email, postLoginDataCallback);
+    }
+  }
 
-  return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between lg:flex">
-        <Button variant="outline-primary" onClick={onClickLoginButton} className="setMonthsButtons">Simulated Login</Button>
-      </div>
-    </main>
-  );
+  return <div>Loading ...</div>
 }
