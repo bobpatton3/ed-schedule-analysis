@@ -42,10 +42,9 @@ export default class AllSchedulesData {
         id?: string,
         setCurrSchedData?: Dispatch<SetStateAction<ScheduleDataType>>,
     ) {
+        const params = `/${department_id}`;
 
-        const get_schedules_url = "http://localhost:8080/schedules/" + department_id;
-
-        const res = await fetch(get_schedules_url);
+        const res = await fetch(`api/forwardToServer?serverapi=schedules&params=${params}`, { method: 'GET', });
 
         const schedulesAPIResp = res.json();
 
@@ -112,9 +111,9 @@ export default class AllSchedulesData {
 
     public async deleteSchedule(pk: string, deleteScheduleSuccessfulCallback: (pk: string) => void) {
         try {
-            const response = await fetch("http://localhost:8080/schedules/" + pk, {
-                method: "DELETE",
-            });
+            const params = `/${pk}`;
+
+            const response = await fetch(`api/forwardToServer?serverapi=schedules&params=${params}`, { method: 'DELETE', });
 
             if (response.status >= 400) {
                 console.log("server returns error: response >= 400");
@@ -136,21 +135,16 @@ export default class AllSchedulesData {
         const retShiftsWithScheduleData: ShiftWithScheduleDataType[] = this.flattenLocalScheduleToServerData(schedule);
 
         try {
-            const response = await fetch("http://localhost:8080/schedules", {
-                body: JSON.stringify(retShiftsWithScheduleData),
-                headers: {
-                    //'Authorization': 'Basic ' + base64.encode("APIKEY:X"),
-                    "Content-Type": "application/json; charset=utf8",
-                },
-                method: "POST",
-            });
+            const params = "";
+
+            const response = await fetch(`api/forwardToServer?serverapi=schedules&params=${params}`, { method: 'POST', body: JSON.stringify(retShiftsWithScheduleData) });
 
             if (response.status >= 400) {
                 console.log("server returns error: response >= 400");
                 return;
             }
 
-            const scheduleSaveAPIResp = response.text();
+            const scheduleSaveAPIResp = response.json();
             const scheduleSaveData = await Promise.all([scheduleSaveAPIResp]);
 
             this.retrieveAllSchedulesData(

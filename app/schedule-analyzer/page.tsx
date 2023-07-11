@@ -37,11 +37,13 @@ export default function ScheduleAnalyzer() {
 
     const { user, error, isLoading } = useUser();
 
+    /*
     if (!user) {
         const router = useRouter();
         router.push('/');
         return <div>re-routing...</div>
     }
+    */
 
     const uuid_for_init: UUID = "00000000-0000-0000-0000-000000000000";
     const todaysDate: Date = new Date();

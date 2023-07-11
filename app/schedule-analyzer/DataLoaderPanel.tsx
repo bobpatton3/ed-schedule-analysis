@@ -5,7 +5,7 @@ import { useContext, useState } from "react";
 import { Button, FloatingLabel, Form } from "react-bootstrap";
 import { StatusHeaderDataType } from "./CurrentScheduleAndCoverageData";
 import { UUID } from "crypto";
-import { DepartmentConfigurationType, PostLoginDataContext } from "@/context/context";
+import { DepartmentConfigurationType, PostLoginDataContext } from "@/context/postLoginDataContext";
 
 const DataLoaderPanel = (
     { arrivals_update_callback, retrieve_all_schedules_callback }:

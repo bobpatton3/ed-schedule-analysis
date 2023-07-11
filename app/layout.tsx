@@ -1,7 +1,7 @@
 "use client";
 import "./globals.css";
 import { Inter } from "next/font/google";
-import { PostLoginDataContextProvider } from "../context/context";
+import { PostLoginDataContextProvider } from "@/context/postLoginDataContext";
 import { UserProvider } from "@auth0/nextjs-auth0/client";
 
 const inter = Inter({ subsets: ["latin"] });
