@@ -44,12 +44,13 @@ function SchedulesPanel(
 
     const rows: object[] = [];
     all_schedules_data.forEach((value: ScheduleDataType, key: string) => {
+        const creationDate: Date = new Date(value.creationDate);
         rows.push({
             id: value.pk,
             name: value.schedule_name,
             creator: value.owner,
-            yearly_cost: value.yearly_cost,
-            creation_date: value.creationDate
+            //yearly_cost: value.yearly_cost,
+            creation_date: creationDate.toLocaleDateString(),
         });
     });
 
@@ -68,7 +69,7 @@ function SchedulesPanel(
         {
             field: 'name',
             headerName: 'Name',
-            width: 200,
+            width: 250,
             align: 'left',
             renderCell: (params) => (
                 <Button
@@ -81,20 +82,20 @@ function SchedulesPanel(
         },
         {
             field: 'creator',
-            headerName: 'Creator',
-            width: 100,
+            headerName: 'Owner',
+            width: 120,
             align: 'center',
         },
-        {
-            field: 'yearly_cost',
-            headerName: 'Yearly Cost',
-            width: 50,
-            align: 'center',
-        },
+        // {
+        //     field: 'yearly_cost',
+        //     headerName: '$',
+        //     width: 120,
+        //     align: 'center',
+        // },
         {
             field: 'creation_date',
-            headerName: 'Created On',
-            width: 70,
+            headerName: 'Created',
+            width: 100,
             align: 'center'
         },
     ];

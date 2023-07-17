@@ -3,11 +3,12 @@
 import { useRouter } from "next/navigation";
 import { Button } from "react-bootstrap";
 import { DepartmentConfigurationType, PostLoginDataContext } from "@/context/postLoginDataContext";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { useUser } from "@auth0/nextjs-auth0/client";
 
 export default function Home() {
   const { user, error, isLoading } = useUser();
+  const [loadingData, setLoadingData] = useState(false);
 
   const router = useRouter();
   const postLoginDataContext = useContext(PostLoginDataContext);
@@ -63,18 +64,14 @@ export default function Home() {
   function postLoginDataCallback(postLoginDataRet: Map<string, Map<string, Map<string, DepartmentConfigurationType>>>) {
     console.log("Home.postLoginDataCallback");
     postLoginDataContext.setPostLoginData(postLoginDataRet);
+    router.push('/schedule-analyzer');
   }
 
   function onClickLoadDataButton() {
-    console.log("Home.onClickLoadDataButton");
+    setLoadingData(true);
     if (user && user.email) {
       getPostLoginData(user.email, postLoginDataCallback);
     }
-  }
-
-  function onClickScheduleAnalyzerButton() {
-    console.log("Home.onClickScheduleAnalyzerButton");
-    router.push('/schedule-analyzer');
   }
 
   function onClickLoginButton() {
@@ -101,17 +98,21 @@ export default function Home() {
         getPostLoginData(user.email, postLoginDataCallback);
       }
     }
-
-    
   */
 
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between lg:flex">
-        <Button variant="outline-primary" onClick={onClickLoginButton} className="setMonthsButtons">Login</Button><br />
-        <Button variant="outline-primary" onClick={onClickLoadDataButton} className="setMonthsButtons">Load Data</Button><br />
-        <Button variant="outline-primary" onClick={onClickScheduleAnalyzerButton} className="setMonthsButtons">Schedule Analyzer</Button><br />
-        <Button variant="outline-primary" onClick={onClickLogoutButton} className="setMonthsButtons">Logout</Button><br />
+    <main >
+      <div className="logincenter">
+        {(isLoading || loadingData) ? <div>...LOADING!</div> :
+          (!user) ?
+            <Button variant="primary" onClick={onClickLoginButton} className="setMonthsButtons">Login</Button> :
+            <div>
+              <Button variant="primary" onClick={onClickLoadDataButton} className="setMonthsButtons">Load Data</Button><br />
+              <a className="btn btn-primary setMonthsButtons" href="/api/auth/logout">Logout</a>
+            </div>
+        }
+        <br />
       </div>
     </main>
   );

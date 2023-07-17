@@ -67,6 +67,22 @@ input {
   border: 2px solid lightgrey;
   padding: 0.85rem 1rem;
 }
+.divHeaderLeft {
+  display: inline-block;
+  width: 88vw;
+  height: 4vh;
+  vertical-align: top;
+  margin: 0rem 0rem 0.5rem 0rem;
+}
+.divHeaderRight {
+  display: inline-block;
+  width: 6vw;
+  height: 4vh;
+  vertical-align: top;
+  justify-items: right;
+  justify-content: right;
+  margin: 0rem 0rem 0.5rem 0rem;
+}
 .statusHeaderInfo {
   font-weight: bold;
   padding: 0rem 0rem 0rem 0rem;
@@ -116,12 +132,6 @@ input {
   margin: 1rem 0.5rem 0.5rem 0.5rem;
   min-width: 16rem;
 }
-.setMonthsButtons {
-  display: inline-block;
-  vertical-align: top;
-  margin: 1rem 0.5rem 0.5rem 0.5rem;
-  min-width: 4rem;
-}
 .schedulesPanelDiv {
   vertical-align: top;
   margin: 0.5rem 0.5rem 0.5rem 0.5rem;
@@ -136,6 +146,18 @@ input {
   padding-top: 0.7rem;
   padding-left: 1rem;
   padding-bottom: 0.3rem;
+}
+.setMonthsButtons {
+  display: inline-block;
+  vertical-align: top;
+  margin: 1rem 0.5rem 0.5rem 0.5rem;
+  min-width: 4rem;
+}
+.logoutButton {
+  display: inline-block;
+  vertical-align: top;
+  margin: 0rem 0rem 0rem 0rem;
+  min-width: 4rem;
 }
 .scheduleListButton {
   border: none;
@@ -256,4 +278,12 @@ div.scroll {
 }
 .saveScheduleFormGroup {
   margin: 0rem 0rem 1.5rem 0rem;
+}
+.logincenter {
+  border: 0px solid;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 10px;
 }

@@ -238,37 +238,38 @@ export default function ScheduleAnalyzer() {
     physScheduleShiftsArray.sort((a, b) => (a.start - b.start) ? (a.start - b.start) : (a.duration - b.duration));
     appScheduleShiftsArray.sort((a, b) => (a.start - b.start) ? (a.start - b.start) : (a.duration - b.duration));
 
-    console.log("page.tsx loading");
     if (arrivalsData && currCovData) {
         return (
 
             <div className="baseAppPanel">
                 <div className="statusHeaderDiv">
-                    <label className="edSchedStatusHdr">Facility: </label>
-                    <label className="statusHeaderInfo">{statusHeaderData.facility_name}</label>
-                    <label className="edSchedStatusHdr">Department: </label>
-                    <label className="statusHeaderInfo">{statusHeaderData.department_name} </label>
-                    <label className="edSchedStatusHdr">Date Range: </label>
-                    <label className="statusHeaderInfo">{statusHeaderData.data_start_date.toLocaleDateString()}</label>
-                    <label className="edSchedStatusConnector">-</label>
-                    <label className="statusHeaderInfo">{statusHeaderData.data_end_date.toLocaleDateString()}</label>
-                    <label className="edSchedStatusHdr">Schedule: </label>
-                    <label className="statusHeaderInfo">{statusHeaderData.schedule_name} </label>
+                    <div className="divHeaderLeft">
+                        <label className="edSchedStatusHdr">Facility: </label>
+                        <label className="statusHeaderInfo">{statusHeaderData.facility_name}</label>
+                        <label className="edSchedStatusHdr">Department: </label>
+                        <label className="statusHeaderInfo">{statusHeaderData.department_name} </label>
+                        <label className="edSchedStatusHdr">Date Range: </label>
+                        <label className="statusHeaderInfo">{statusHeaderData.data_start_date.toLocaleDateString()}</label>
+                        <label className="edSchedStatusConnector">-</label>
+                        <label className="statusHeaderInfo">{statusHeaderData.data_end_date.toLocaleDateString()}</label>
+                        <label className="edSchedStatusHdr">Schedule: </label>
+                        <label className="statusHeaderInfo">{statusHeaderData.schedule_name} </label>
 
-                    <br />
-                    <label className="edSchedStatusHdr">Phys:</label>
-                    <label className="statusHeaderInfo">{physWeeklyHours} hours</label>
-                    <label className="edSchedStatusHdr">APP:</label>
-                    <label className="statusHeaderInfo">{appWeeklyHours} hours</label>
-                    <label className="edSchedStatusHdr">Cost:</label>
-                    <label className="statusHeaderInfo">${yearlyCost.toFixed(1)}M</label>
-                    <label className="edSchedStatusHdr">Phys Peak Capacity:</label>
-                    <label className="statusHeaderInfo">{statusHeaderData.phys_peak_capacity}</label>
-                    <label className="edSchedStatusHdr">App Peak Capacity:</label>
-                    <label className="statusHeaderInfo">{statusHeaderData.app_peak_capacity}</label>
-
-                    <br />
-                    <a href="/api/auth/logout">Logout</a>
+                        <br />
+                        <label className="edSchedStatusHdr">Phys Hours:</label>
+                        <label className="statusHeaderInfo">{physWeeklyHours}</label>
+                        <label className="edSchedStatusHdr">APP Hours:</label>
+                        <label className="statusHeaderInfo">{appWeeklyHours}</label>
+                        <label className="edSchedStatusHdr">Cost:</label>
+                        <label className="statusHeaderInfo">${yearlyCost.toFixed(2)}M</label>
+                        <label className="edSchedStatusHdr">Phys Peak Capacity:</label>
+                        <label className="statusHeaderInfo">{statusHeaderData.phys_peak_capacity}</label>
+                        <label className="edSchedStatusHdr">App Peak Capacity:</label>
+                        <label className="statusHeaderInfo">{statusHeaderData.app_peak_capacity}</label>
+                    </div>
+                    <div className="divHeaderRight">
+                        <a className="btn btn-primary logoutButton" href="/api/auth/logout">Logout</a>
+                    </div>
                 </div>
                 <div className="controlAndChartsDiv">
                     <div className="divLeft">
