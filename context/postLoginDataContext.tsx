@@ -11,17 +11,17 @@ export type DepartmentConfigurationType = {
   phys_peak_capacity: number,
   app_hourly_cost: number,
   app_peak_capacity: number,
-};
+}
 
 type PostLoginDataGlobalContextType = {
   postLoginData: Map<string, Map<string, Map<string, DepartmentConfigurationType>>>;
   setPostLoginData: (postLoginDataContext: Map<string, Map<string, Map<string, DepartmentConfigurationType>>>) => void;
-};
+}
 
 const postLoginDataInstance: PostLoginDataGlobalContextType = {
   postLoginData: new Map<string, Map<string, Map<string, DepartmentConfigurationType>>>(),
   setPostLoginData: (newPostLoginData: Map<string, Map<string, Map<string, DepartmentConfigurationType>>>) => { postLoginDataInstance.postLoginData = newPostLoginData },
-};
+}
 
 export const PostLoginDataContext = createContext<PostLoginDataGlobalContextType>(postLoginDataInstance);
 
@@ -37,5 +37,5 @@ export const PostLoginDataContextProvider = ({
       {children}
     </PostLoginDataContext.Provider>
   );
-};
+}
 

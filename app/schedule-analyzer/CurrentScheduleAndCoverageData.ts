@@ -1,3 +1,5 @@
+"use client";
+
 import { UUID } from "crypto";
 import { ScheduleDataType, ShiftDataType } from "./AllSchedulesData";
 
@@ -10,12 +12,12 @@ export type WeekCoverageDataType = {
     FRI: number[],
     SAT: number[],
     AVG: number[],
-};
+}
 
 export type CoverageDataType = {
     Full: WeekCoverageDataType,
     l5CC: WeekCoverageDataType,
-};
+}
 
 export type StatusHeaderDataType = {
     group_name: string,

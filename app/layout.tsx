@@ -1,5 +1,7 @@
 "use client";
+
 import "./globals.css";
+import "bootstrap/dist/css/bootstrap.min.css"; // Import bootstrap CSS
 import { Inter } from "next/font/google";
 import { PostLoginDataContextProvider } from "@/context/postLoginDataContext";
 import { UserProvider } from "@auth0/nextjs-auth0/client";

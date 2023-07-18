@@ -1,3 +1,5 @@
+"use client";
+
 import { Dispatch, SetStateAction } from "react";
 import { StatusHeaderDataType } from "./CurrentScheduleAndCoverageData";
 
@@ -10,12 +12,12 @@ export type WeekArrivalsDataType = {
     FRI: number[],
     SAT: number[],
     AVG: number[],
-};
+}
 
 export type ArrivalsDataType = {
     Full: WeekArrivalsDataType,
     l5CC: WeekArrivalsDataType,
-};
+}
 
 export default class ArrivalsData {
 

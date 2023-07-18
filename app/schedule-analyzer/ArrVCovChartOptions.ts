@@ -20,7 +20,7 @@ export default function ArrVCovChartOptions(maxY: number) {
         },
         export: {
           csv: {
-            filename: undefined,
+            filename: "sched_analyzer.csv",
             columnDelimiter: ",",
             headerCategory: "category",
             headerValue: "value",
@@ -29,10 +29,10 @@ export default function ArrVCovChartOptions(maxY: number) {
             },
           },
           svg: {
-            filename: undefined,
+            filename: "sched_analyzer.svg",
           },
           png: {
-            filename: undefined,
+            filename: "sched_analyzer.png",
           },
         },
         autoSelected: "zoom",
@@ -62,7 +62,6 @@ export default function ArrVCovChartOptions(maxY: number) {
       style: {
         fontSize: "14px",
         fontWeight: "bold",
-        fontFamily: undefined,
         color: "#263238",
       },
     },
@@ -80,7 +79,6 @@ export default function ArrVCovChartOptions(maxY: number) {
         style: {
           fontSize: "12px",
           fontWeight: "bold",
-          fontFamily: undefined,
           color: "#263238",
         },
       },
@@ -99,7 +97,6 @@ export default function ArrVCovChartOptions(maxY: number) {
         style: {
           fontSize: "12px",
           fontWeight: "bold",
-          fontFamily: undefined,
           color: "#263238",
         },
       },

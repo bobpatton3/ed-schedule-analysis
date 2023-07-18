@@ -1,8 +1,8 @@
 "use client";
 import React from "react";
-import Chart from "react-apexcharts";
 import ArrVCovChartOptions from "./ArrVCovChartOptions";
 import { ApexOptions } from "apexcharts";
+import ApexChart from "./ApexChart";
 
 const ArrivalsVsCoverageChart = ({
     day_of_week,
@@ -45,9 +45,9 @@ const ArrivalsVsCoverageChart = ({
 
     return (
         <div className="tabPanelDiv">
-            <Chart options={new_options} series={series} type="line" />
+            <ApexChart options={new_options} series={series} type="line" />
         </div>
     );
-};
+}
 
 export default ArrivalsVsCoverageChart;

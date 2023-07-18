@@ -9,7 +9,7 @@ import DeleteScheduleConfirmationModal from "./DeleteScheduleConfirmationModal";
 type PkModalStatePair = {
     pk: string;
     modal_state: boolean;
-};
+}
 
 function SchedulesPanel(
     {
@@ -60,10 +60,10 @@ function SchedulesPanel(
             width: 60,
             align: "center",
             renderCell: (params) => (
-                <Button
+                <button
                     onClick={() => onClickDeleteScheduleButton(params.id)}
                     className="scheduleDeleteButton"
-                >&#8212;</Button>
+                >&#8212;</button>
             )
         },
         {
@@ -72,12 +72,12 @@ function SchedulesPanel(
             width: 250,
             align: 'left',
             renderCell: (params) => (
-                <Button
+                <button
                     onClick={() => onClickScheduleNameButton(params.id)}
                     className="scheduleListButton"
                 >
                     {params.value}
-                </Button>
+                </button>
             ),
         },
         {

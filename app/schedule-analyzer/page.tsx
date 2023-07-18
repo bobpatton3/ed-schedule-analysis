@@ -1,5 +1,6 @@
 "use client";
 
+import { Button, Tab, Tabs } from "react-bootstrap";
 import ArrivalsData, { ArrivalsDataType } from "./ArrivalsData";
 import { useState } from "react";
 import CurrentScheduleAndCoverageData, {
@@ -7,14 +8,12 @@ import CurrentScheduleAndCoverageData, {
     StatusHeaderDataType,
 } from "./CurrentScheduleAndCoverageData";
 import AllSchedulesData, { ScheduleDataType, ShiftDataType } from "./AllSchedulesData";
-import { Button, Tab, Tabs } from "react-bootstrap";
 import DataLoaderPanel from "./DataLoaderPanel";
 import SchedulesPanel from "./SchedulesPanel";
 import ArrivalsDataSlice from "./ArrivalsDataSlice";
 import ShiftSliderComponent from "./ShiftSliderComponent";
 import SaveScheduleModal from "./SaveScheduleModal";
 import { UUID } from "crypto";
-import { useRouter } from "next/navigation";
 import { useUser } from "@auth0/nextjs-auth0/client";
 
 // toggling the use of a prefix on the ShiftSliderComponent's key ensures the Designer tab
@@ -285,9 +284,9 @@ export default function ScheduleAnalyzer() {
                                 <div className="scroll">
                                     <div className="tabPanelDiv">
                                         <div className="providerTypeDivs">Physician shifts:
-                                            <Button className="addShiftsButton" onClick={() => addShift("PHYS")}>+</Button>
-                                            <Button className="newScheduleButton" onClick={clearForNewDesign}>Design New Schedule</Button>
-                                            <Button className="saveChangesButton" onClick={saveScheduleChanges}>Save Changes</Button>
+                                            <button className="addShiftsButton" onClick={() => addShift("PHYS")}>+</button>
+                                            <button className="newScheduleButton" onClick={clearForNewDesign}>Design New Schedule</button>
+                                            <button className="saveChangesButton" onClick={saveScheduleChanges}>Save Changes</button>
                                         </div>
                                         {physScheduleShiftsArray.map((shift) =>
                                             <ShiftSliderComponent
@@ -298,7 +297,7 @@ export default function ScheduleAnalyzer() {
                                     </div>
                                     <div className="tabPanelDiv">
                                         <div className="providerTypeDivs">APP shifts:
-                                            <Button className="addShiftsButton" onClick={() => addShift("APP")}>+</Button></div>
+                                            <button className="addShiftsButton" onClick={() => addShift("APP")}>+</button></div>
                                         {appScheduleShiftsArray.map((shift) =>
                                             <ShiftSliderComponent
                                                 key={(usePrefix) ? 1000 + shift.id : shift.id}

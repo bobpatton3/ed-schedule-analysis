@@ -1,3 +1,5 @@
+"use client";
+
 import { UUID } from "crypto";
 import { Dispatch, SetStateAction } from "react";
 
@@ -8,7 +10,7 @@ export type ShiftDataType = {
     deleteFlag?: boolean;
     daysOfWeek: boolean[];
     providerType: string;
-};
+}
 
 export type ScheduleDataType = {
     pk: string;
@@ -19,7 +21,7 @@ export type ScheduleDataType = {
     department_id: UUID;
     shifts: Map<string, ShiftDataType>;
     yearly_cost: number;
-};
+}
 
 export type ShiftWithScheduleDataType = {
     schedule_id: string;

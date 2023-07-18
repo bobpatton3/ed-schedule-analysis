@@ -169,42 +169,52 @@ input {
 .scheduleDeleteButton {
   border: none;
   background-color: red;
+  color: white;
   font-family: "Montserrat", sans-serif;
   padding: 0rem;
   font-size: 10pt;
   margin-left: 0rem;
-  border-radius: 1rem;
+  border-radius: 50%;
   width: 1.5rem;
   height: 1.5rem;
 }
 .addShiftsButton {
   border: none;
   background-color: green;
+  color: white;
   font-family: "Montserrat", sans-serif;
   padding: 0rem;
   font-size: 10pt;
   margin-left: 1rem;
-  border-radius: 1rem;
   width: 1.5rem;
   height: 1.5rem;
+  border-radius: 50%;
 }
 .newScheduleButton {
   border: none;
-  padding-top: 0.25rem;
+  padding-top: 0.2rem;
+  padding-left: 0.7rem;
+  padding-right: 0.7rem;
   background-color: green;
+  color: white;
   font-family: "Montserrat", sans-serif;
   font-size: 10pt;
   margin-left: 3rem;
-  height: 1.7rem;
+  height: 2.0rem;
+  border-radius: 10px;
 }
 .saveChangesButton {
   border: none;
-  padding-top: 0.25rem;
+  padding-top: 0.2rem;
+  padding-left: 0.7rem;
+  padding-right: 0.7rem;
   background-color: green;
+  color: white;
   font-family: "Montserrat", sans-serif;
   font-size: 10pt;
   margin-left: 3rem;
-  height: 1.7rem;
+  height: 2.0rem;
+  border-radius: 10px;
 }
 div.scroll {
   overflow-y: auto;

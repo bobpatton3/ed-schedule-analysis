@@ -1,8 +1,8 @@
 "use client";
 import React from "react";
-import Chart from "react-apexcharts";
 import { ApexOptions } from "apexcharts";
 import PercentCapacityChartOptions from "./PercentCapacityChartOptions";
+import ApexChart from "./ApexChart";
 
 function PercentCapacityChart(
     {
@@ -62,7 +62,7 @@ function PercentCapacityChart(
 
     return (
         <div className="tabPanelDiv" >
-            <Chart options={new_options} series={series} type="line" />
+            <ApexChart options={new_options} series={series} type="line" />
         </div>
     );
 }

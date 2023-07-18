@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Form } from "react-bootstrap";
+import { Form } from "react-bootstrap";
 import ReactModal from "react-modal";
 
 const DeleteScheduleConfirmationModal = ({
@@ -41,22 +41,23 @@ const DeleteScheduleConfirmationModal = ({
         <Form.Group className="saveScheduleFormGroup">
           <Form.Label>
             Delete this schedule?
-            <br />"{local_schedule_name}"
+            <br />
+            &quot;{local_schedule_name}&quot;
           </Form.Label>
         </Form.Group>
         <Form.Group>
-          <Button
+          <button
             className="saveChangesButton"
             onClick={() => handle_modal_close_callback(false)}
           >
             Cancel
-          </Button>
-          <Button
+          </button>
+          <button
             className="saveChangesButton"
             onClick={deleteChangesButtonHandler}
           >
             Delete Schedule
-          </Button>
+          </button>
         </Form.Group>
       </Form>
     </ReactModal>

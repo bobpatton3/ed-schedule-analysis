@@ -46,6 +46,6 @@ const ArrivalsDataSlice = ({ dept_arrivals_data, dept_coverage_data, maxY }: { d
             </Tabs>
         </div>
     );
-};
+}
 
 export default ArrivalsDataSlice;

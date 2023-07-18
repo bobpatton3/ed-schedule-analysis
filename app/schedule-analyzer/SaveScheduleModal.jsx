@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Form } from "react-bootstrap";
+import { Form } from "react-bootstrap";
 import ReactModal from "react-modal";
 
 const SaveScheduleModal = ({
@@ -49,18 +49,18 @@ const SaveScheduleModal = ({
           />
         </Form.Group>
         <Form.Group>
-          <Button
+          <button
             className="saveChangesButton"
             onClick={() => handle_modal_close_callback(false)}
           >
             Cancel
-          </Button>
-          <Button
+          </button>
+          <button
             className="saveChangesButton"
             onClick={saveChangesButtonHandler}
           >
             Save Schedule
-          </Button>
+          </button>
         </Form.Group>
       </Form>
     </ReactModal>

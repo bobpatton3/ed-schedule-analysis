@@ -1,7 +1,7 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { Button } from "react-bootstrap";
+import { useRouter } from "next/navigation";
 import { DepartmentConfigurationType, PostLoginDataContext } from "@/context/postLoginDataContext";
 import { useContext, useState } from "react";
 import { useUser } from "@auth0/nextjs-auth0/client";
@@ -74,39 +74,12 @@ export default function Home() {
     }
   }
 
-  function onClickLoginButton() {
-    console.log("onClickLoginButton");
-    if (user && user.email) {
-      console.log("onClickLoginButton with valid user and email so do nothing");
-    } else {
-      console.log("login");
-      router.push('/api/auth/login');
-    }
-  };
-
-  function onClickLogoutButton() {
-    console.log("onClickLogoutButton ");
-    router.push('/api/auth/logout');
-  };
-  /*
-    if (!isLoading) {
-      if (error) return <div>{error.message}</div>
-      else if (!user) {
-        router.push('/api/auth/login');
-      }
-      else if (user.email) {
-        getPostLoginData(user.email, postLoginDataCallback);
-      }
-    }
-  */
-
-
   return (
     <main >
       <div className="logincenter">
         {(isLoading || loadingData) ? <div>...LOADING!</div> :
           (!user) ?
-            <Button variant="primary" onClick={onClickLoginButton} className="setMonthsButtons">Login</Button> :
+            <a className="btn btn-primary setMonthsButtons" href="/api/auth/login">Login</a> :
             <div>
               <Button variant="primary" onClick={onClickLoadDataButton} className="setMonthsButtons">Load Data</Button><br />
               <a className="btn btn-primary setMonthsButtons" href="/api/auth/logout">Logout</a>
