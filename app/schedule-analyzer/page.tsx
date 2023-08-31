@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Tab, Tabs } from "react-bootstrap";
+import { Tab, Tabs } from "react-bootstrap";
 import ArrivalsData, { ArrivalsDataType } from "./ArrivalsData";
 import { useState } from "react";
 import CurrentScheduleAndCoverageData, {
@@ -14,7 +14,6 @@ import ArrivalsDataSlice from "./ArrivalsDataSlice";
 import ShiftSliderComponent from "./ShiftSliderComponent";
 import SaveScheduleModal from "./SaveScheduleModal";
 import { UUID } from "crypto";
-import { useUser } from "@auth0/nextjs-auth0/client";
 
 // toggling the use of a prefix on the ShiftSliderComponent's key ensures the Designer tab
 // gets refreshed back to its previously saved state by clicking on the same schedule again in
@@ -33,16 +32,6 @@ export default function ScheduleAnalyzer() {
      * 8. ability to temporarily override peak capacities
      *
      */
-
-    const { user, error, isLoading } = useUser();
-
-    /*
-    if (!user) {
-        const router = useRouter();
-        router.push('/');
-        return <div>re-routing...</div>
-    }
-    */
 
     const uuid_for_init: UUID = "00000000-0000-0000-0000-000000000000";
     const todaysDate: Date = new Date();
@@ -159,10 +148,6 @@ export default function ScheduleAnalyzer() {
 
         let newSchedData: ScheduleDataType = { ...currSchedData };
 
-        // Object.entries(shift_data).forEach((v, k) => console.log(`${v[0]} = ${v[1]}`));
-        // Object.entries(newSchedData).forEach((v, k) => console.log(`${v[0]} = ${v[1]}`));
-        // Object.entries(newSchedData.shifts).forEach((v, k) => console.log(`${v[0]} = ${v[1].id},  ${v[1].duration},  ${v[1].providerType}`));
-
         let newShifts: Map<string, ShiftDataType> = new Map<string, ShiftDataType>(newSchedData.shifts);
         newShifts.set(shift_data.id, shift_data);
         newSchedData.shifts = newShifts;
@@ -179,7 +164,7 @@ export default function ScheduleAnalyzer() {
 
     function addShift(provType: string) {
         let idval: number = 0;
-        for (let i = 0; i < currentScheduleShiftsArray.length; i++) idval = (idval < parseInt(currentScheduleShiftsArray[i].id)) ? parseInt(currentScheduleShiftsArray[i].id) : idval;
+        for (const element of currentScheduleShiftsArray) idval = (idval < parseInt(element.id)) ? parseInt(element.id) : idval;
         idval += 1;
         const newShift: ShiftDataType = { id: idval.toString(), start: 8, duration: 8, deleteFlag: false, daysOfWeek: [true, true, true, true, true, true, true,], providerType: provType };
 

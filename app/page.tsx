@@ -16,7 +16,7 @@ import { useUser } from "@auth0/nextjs-auth0/client";
 */
 
 export default function Home() {
-  const { user, error, isLoading } = useUser();
+  const { user, isLoading } = useUser();
   const [loadingData, setLoadingData] = useState(false);
 
   const router = useRouter();
@@ -24,7 +24,6 @@ export default function Home() {
 
   async function getPostLoginData(username: string, post_login_data_callback: (postLoginDataRet: Map<string, Map<string, Map<string, DepartmentConfigurationType>>>) => void) {
     console.log("Home.postLoginData");
-    const now: Date = new Date();
 
     const res = await fetch('api/forwardToServer?serverapi=post_login_info&params=/' + user?.email, { method: 'GET', });
 
@@ -77,7 +76,7 @@ export default function Home() {
 
   function onClickLoadDataButton() {
     setLoadingData(true);
-    if (user && user.email) {
+    if (user?.email) {
       getPostLoginData(user.email, postLoginDataCallback);
     }
   }

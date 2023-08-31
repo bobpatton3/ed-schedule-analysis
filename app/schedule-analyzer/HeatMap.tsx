@@ -82,11 +82,9 @@ function HeatMap(
         //90-100 yellow to orange "#ff8855"
         //100-110 transitions orange to red "#FF5555"
 
-        let retVal: string = "#5555ff";  // default color of blue
+        let retVal: string = "#5555ff";  // default color of blue when val <= 60
         if (val === 1000000) {
             retVal = "#888888";
-        } else if (val <= 60) {
-            retVal = "#5555ff";
         } else if (val > 60 && val <= 70) {
             const portion: number = Math.ceil(17 * (70 - val));
             let BB: string = (85 + portion).toString(16);
