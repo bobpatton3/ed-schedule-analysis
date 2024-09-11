@@ -49,7 +49,7 @@ export default class ArrivalsData {
         };
     }
 
-    // http://localhost:8080/arrivals/2022-01-02%2000:00/2022-07-01%2000:00/30%20minutes/A1%20Emergency%20Physicians/Memorial%20Hospital/Main%20ED
+    // http://localhost:8080/arrivals/2022-01-02%2000:00/2022-07-01%2000:00/30%20minutes/710ad2b4-5748-434f-8ece-1e0339b4a76e
 
     public async getArrivalsData(status_header_data: StatusHeaderDataType, set_arrivals_callback: Dispatch<SetStateAction<ArrivalsDataType>>, update_arrmaxy_callback: (retArrMaxY: number) => void) {
 

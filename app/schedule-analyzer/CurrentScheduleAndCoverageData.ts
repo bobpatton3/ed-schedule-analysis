@@ -153,6 +153,7 @@ export default class CurrentScheduleAndCoverageData {
                 this.coverage_data.l5CC.AVG[hod] += eightDaysArrayl5CC[day * 24 + hod] / 7.0;
             }
         }
+
         // handle the end of the week wrap around to the next Sunday (hence why the eightDaysArrays are of length 8*24 = 192 instead of 7*24=168):
         for (let hod = 0; hod < 24; hod++) {
             this.coverage_data.Full.SUN[hod] += eightDaysArrayFull[168 + hod];
@@ -160,5 +161,11 @@ export default class CurrentScheduleAndCoverageData {
             this.coverage_data.l5CC.SUN[hod] += eightDaysArrayl5CC[168 + hod];
             this.coverage_data.l5CC.AVG[hod] += eightDaysArrayl5CC[168 + hod] / 7.0;
         }
+
+        // handle the end-of-the day Saturday wrap-around bucket in case there are any shifts that start midnight Sunday
+        this.coverage_data.Full.SAT[24] = this.coverage_data.Full.SUN[0];
+        this.coverage_data.l5CC.SAT[24] = this.coverage_data.l5CC.SUN[0];
+        this.coverage_data.Full.AVG[24] = this.coverage_data.Full.AVG[0];
+        this.coverage_data.l5CC.AVG[24] = this.coverage_data.l5CC.AVG[0];
     }
 }

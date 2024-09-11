@@ -1,7 +1,8 @@
-import { withApiAuthRequired, getAccessToken } from '@auth0/nextjs-auth0';
+// import { withApiAuthRequired, getAccessToken } from '@auth0/nextjs-auth0';
 import { NextApiRequest, NextApiResponse } from 'next';
 
-export default withApiAuthRequired(async (req, res) => {
+// export default withApiAuthRequired(async (req, res) => {
+export default async function forwardToServer (req: NextApiRequest, res: NextApiResponse<any>) {
 
     try {
         // If our access token is expired and we have a refresh token
@@ -11,7 +12,7 @@ export default withApiAuthRequired(async (req, res) => {
 
         const get_dept_config_url = `http://localhost:8080/${serverapi}${params}`;
 
-        const { accessToken } = await getAccessToken(req, res);
+        // const { accessToken } = await getAccessToken(req, res);
 
         let options: RequestInit = {
             method: req.method,
@@ -19,7 +20,7 @@ export default withApiAuthRequired(async (req, res) => {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
-                Authorization: `Bearer ${accessToken}`
+                // Authorization: `Bearer ${accessToken}`
             },
         };
 
@@ -29,7 +30,7 @@ export default withApiAuthRequired(async (req, res) => {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
-                Authorization: `Bearer ${accessToken}`
+                // Authorization: `Bearer ${accessToken}`
             },
             body: req.body
         };
@@ -48,6 +49,7 @@ export default withApiAuthRequired(async (req, res) => {
             error: error.message
         });
     }
-});
+}
+// });
 
 

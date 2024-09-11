@@ -3,21 +3,28 @@
 import { Button } from "react-bootstrap";
 import { useRouter } from "next/navigation";
 import { DepartmentConfigurationType, PostLoginDataContext } from "@/context/postLoginDataContext";
-import { useContext, useState } from "react";
-import { useUser } from "@auth0/nextjs-auth0/client";
+import { useContext, useEffect, useState } from "react";
+// import { useUser } from "@auth0/nextjs-auth0/client";
 
 /* Things to do:
     - Docker - containerize!
     - Add more Cypress tests?
     - add page that says Server Down! and go there when deptConfigData[0].length === 0  - an "else" on line 62
     - remove Bootstrap. Found it was unnecessary on another proj and caused quite some bloat. See how much I am currently using it - do a test branch and uninstall it
-    - allow the door-to-provider interval to be configurable by the user
-    - allow the doc and PA sculptings to be configurable by the user
+    - add a Configuration page that:
+         - allows the Phys Peak Capacity to be configurable by the user
+         - allows the door-to-provider interval to be configurable by the user
+         - allows the doc and PA sculptings to be configurable by the user
+    - add ability to see a full-width Schedules table including sortable columns with Phys Hours, APP Hours, and Yearly Cost
 */
 
 export default function Home() {
-  const { user, isLoading } = useUser();
+  // const { user, isLoading } = useUser();
+  const { user, isLoading } = { user: {email: 'max_patton@yahoo.com'}, isLoading: false};
   const [loadingData, setLoadingData] = useState(false);
+  useEffect(() => {
+    onClickLoadDataButton();
+  })
 
   const router = useRouter();
   const postLoginDataContext = useContext(PostLoginDataContext);

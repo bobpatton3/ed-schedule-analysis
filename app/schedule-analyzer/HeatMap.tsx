@@ -75,12 +75,13 @@ function HeatMap(
     }
 
     function numberToRGB(val: number): string {
+
         //0-60 is blue #5555ff
         //60-70 transitions blue to green "#55ff55"
-        //70-80 green to yellow "#FFFF55"
-        //80-90 yellow
-        //90-100 yellow to orange "#ff8855"
-        //100-110 transitions orange to red "#FF5555"
+        //70-85 green "#55ff55"
+        //85-90 transitions green to yellow "#FFFF55"
+        //90-95 yellow
+        //95-105 transitions yellow to red "#FF5555"
 
         let retVal: string = "#5555ff";  // default color of blue when val <= 60
         if (val === 1000000) {
@@ -92,19 +93,21 @@ function HeatMap(
             let GG: string = (255 - portion).toString(16);
             if (GG.length === 1) GG = "0" + GG;
             retVal = "#55" + GG + BB;
-        } else if (val > 70 && val <= 80) {
-            const portion: number = Math.ceil((17 * (val - 70)));
+        } else if (val > 70 && val <= 85) {
+            retVal = "#55ff55";
+        } else if (val > 85 && val <= 90) {
+            const portion: number = Math.ceil((17 * (val - 85)) * 2);
             let RR: string = (85 + portion).toString(16);
             if (RR.length === 1) RR = "0" + RR;
             retVal = "#" + RR + "ff55";
-        } else if (val > 80 && val <= 90) {
+        } else if (val > 90 && val <= 95) {
             retVal = "#ffff55";
-        } else if (val > 90 && val <= 110) {
-            const portion: number = Math.ceil((170.0 * (110.0 - val) / 20.0));
+        } else if (val > 95 && val <= 105) {
+            const portion: number = Math.ceil((17 * (105.0 - val)));
             let GG: string = (85 + portion).toString(16);
             if (GG.length === 1) GG = "0" + GG;
             retVal = "#ff" + GG + "55";
-        } else if (val > 110) {
+        } else if (val > 105) {
             retVal = "#ff5555";
         }
 

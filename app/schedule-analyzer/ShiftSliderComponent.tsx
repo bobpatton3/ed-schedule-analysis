@@ -23,7 +23,7 @@ function ShiftSliderComponent(
 
     const [localShift, setLocalShift] = useState(shift);
     const [startStopValues, setStartStopValues] = useState<number[]>([localShift.start, localShift.start + localShift.duration]);
-    const [checked, setChecked] = useState([true, true, true, true, true, true, true]);
+    const [checked, setChecked] = useState(shift.daysOfWeek);
     const [deleteFlagChecked, setDeleteFlagChecked] = useState<boolean>(false);
 
     const handleChangeAllCheckbox = (event: React.ChangeEvent<HTMLInputElement>) => {

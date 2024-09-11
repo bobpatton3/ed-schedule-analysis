@@ -4,7 +4,7 @@ import "./globals.css";
 import "bootstrap/dist/css/bootstrap.min.css"; // Import bootstrap CSS
 import { Inter } from "next/font/google";
 import { PostLoginDataContextProvider } from "@/context/postLoginDataContext";
-import { UserProvider } from "@auth0/nextjs-auth0/client";
+// import { UserProvider } from "@auth0/nextjs-auth0/client";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -15,14 +15,14 @@ export default function RootLayout({
 }) {
 
   return (
-    <UserProvider>
+    // <UserProvider>
       <PostLoginDataContextProvider >
         <html lang="en">
           <body className={inter.className}>
             {children}
           </body>
         </html>
-      </PostLoginDataContextProvider>
-    </UserProvider>
+       </PostLoginDataContextProvider>
+    // </UserProvider>
   );
 }
