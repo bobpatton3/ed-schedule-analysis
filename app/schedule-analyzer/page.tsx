@@ -193,12 +193,20 @@ export default function ScheduleAnalyzer() {
                 console.log("There are no changes to process.");
                 return;
             }
+            let currDateTime: Date = new Date();
             if (sched_name != statusHeaderData.schedule_name) {
                 setStatusHeaderData({ ...statusHeaderData, schedule_name: sched_name });
-                const newSchedData: ScheduleDataType = { ...currSchedData, pk: uuid_for_init, schedule_name: sched_name, department_id: statusHeaderData.department_id };
+                const newSchedData: ScheduleDataType = { ...currSchedData, 
+                    pk: uuid_for_init, 
+                    schedule_name: sched_name, 
+                    department_id: statusHeaderData.department_id,
+                    updateDate: currDateTime,
+                    creationDate: currDateTime,
+                 };
                 setCurrSchedData(newSchedData);
                 allSchedulesDataManager.saveSchedule(newSchedData, setAllSchedulesData, setCurrSchedData);
             } else {
+                currSchedData.updateDate = currDateTime;
                 allSchedulesDataManager.saveSchedule(currSchedData, setAllSchedulesData, setCurrSchedData);
             }
         }

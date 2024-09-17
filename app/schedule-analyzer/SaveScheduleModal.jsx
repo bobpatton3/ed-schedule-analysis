@@ -10,17 +10,13 @@ const SaveScheduleModal = ({
 }) => {
   let local_schedule_name = current_schedule_name;
 
-  const saveChangesButtonHandler = () => {
-    handle_modal_close_callback(true, local_schedule_name);
-  };
-
   const handleScheduleNameChange = (e) => {
     local_schedule_name = e.target.value;
   };
 
   const handleFormSubmitWithEnter = (e) => {
     e.preventDefault();
-    saveChangesButtonHandler();
+    handle_modal_close_callback(true, local_schedule_name);
   };
 
   const handleRequestCloseFunc = () => {
@@ -50,14 +46,15 @@ const SaveScheduleModal = ({
         </Form.Group>
         <Form.Group>
           <button
+            type="button"
             className="saveChangesButton"
             onClick={() => handle_modal_close_callback(false)}
           >
             Cancel
           </button>
           <button
+            type="submit"
             className="saveChangesButton"
-            onClick={saveChangesButtonHandler}
           >
             Save Schedule
           </button>

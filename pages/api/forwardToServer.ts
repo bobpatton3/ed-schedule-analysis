@@ -24,16 +24,7 @@ export default async function forwardToServer (req: NextApiRequest, res: NextApi
             },
         };
 
-        if (req.body) options = {
-            method: req.method,
-            credentials: 'include',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                // Authorization: `Bearer ${accessToken}`
-            },
-            body: req.body
-        };
+        if (req.body) options.body = req.body;
 
         const response = await fetch(get_dept_config_url, options);
 

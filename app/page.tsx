@@ -52,7 +52,7 @@ export default function Home() {
         }
         if (!deptConfigurations.get(r.client_group_name)?.get(r.facility_name)?.has(r.department_name)) {
 
-          const dpetConfig: DepartmentConfigurationType = {
+          const deptConfig: DepartmentConfigurationType = {
             department_id: r.department_id,
             department_name: r.department_name,
             data_start_date: new Date(r.data_start_date * 1000),
@@ -62,11 +62,11 @@ export default function Home() {
             app_hourly_cost: r.app_hourly_cost,
             app_peak_capacity: r.app_peak_capacity,
           };
-          deptConfigurations.get(r.client_group_name)?.get(r.facility_name)?.set(r.department_name, dpetConfig);
+          deptConfigurations.get(r.client_group_name)?.get(r.facility_name)?.set(r.department_name, deptConfig);
           console.log("r.data_start_date = " + r.data_start_date);
           const st: Date = new Date(r.data_start_date * 1000);
           console.log("st = " + st);
-          console.log("dpetConfig.data_start_date = " + dpetConfig.data_start_date);
+          console.log("deptConfig.data_start_date = " + deptConfig.data_start_date);
         }
       });
     }
