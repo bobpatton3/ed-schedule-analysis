@@ -10,7 +10,7 @@ export default async function forwardToServer (req: NextApiRequest, res: NextApi
 
         const { serverapi, params } = req.query;
 
-        const get_dept_config_url = `http://localhost:8080/${serverapi}${params}`;
+        const get_dept_config_url = `http://host.docker.internal:8080/${serverapi}${params}`;
 
         // const { accessToken } = await getAccessToken(req, res);
 

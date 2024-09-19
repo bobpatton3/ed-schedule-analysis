@@ -22,16 +22,22 @@ FROM node:18-alpine
 # Set working directory
 WORKDIR /app
 
-# Install serve to serve the app
-RUN npm install -g serve
-
-# Copy the built application from the builder stage
+# Copy only the necessary files from the build stage
+COPY --from=builder /app/package*.json ./
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
-COPY --from=builder /app/package*.json ./
 
-# Expose the port on which the app will run
+# Install only production dependencies
+RUN npm install --production
+
+# Expose the port the app runs on
 EXPOSE 3000
 
-# Command to run the application
-CMD ["serve", "-s", ".", "-l", "3000"]
+# Set environment variables to bind to all interfaces (0.0.0.0)
+ENV NODE_ENV=production
+ENV HOST=0.0.0.0
+ENV PORT=3000
+
+# Start the Next.js application
+CMD ["npm", "start"]
+
